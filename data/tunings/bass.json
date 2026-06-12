@@ -1,0 +1,25 @@
+[
+  {
+    "instrument": "bass",
+    "slug": "standard",
+    "name": "Standard",
+    "title": "Bass Tuner",
+    "description": "Free online bass tuner. Tune your 4-string bass to standard E-A-D-G using your microphone.",
+    "keywords": ["bass tuner", "online bass tuner", "bass guitar tuner"],
+    "notes": ["E1", "A1", "D2", "G2"],
+    "faq": [
+      {
+        "question": "What is standard bass tuning?",
+        "answer": "Standard 4-string bass tuning is E-A-D-G from the lowest (4th) string to the highest (1st) string, one octave lower than the bottom four guitar strings."
+      },
+      {
+        "question": "How does an online bass tuner work?",
+        "answer": "Our bass tuner uses your device's microphone to detect the pitch of each string and shows whether you need to tune up or down."
+      },
+      {
+        "question": "Is this bass tuner free?",
+        "answer": "Yes, EasyTuner is completely free to use with no registration required."
+      }
+    ]
+  }
+]

@@ -1,0 +1,25 @@
+[
+  {
+    "instrument": "ukulele",
+    "slug": "standard",
+    "name": "Standard",
+    "title": "Ukulele Tuner",
+    "description": "Free online ukulele tuner. Tune your ukulele to standard G-C-E-A using your microphone.",
+    "keywords": ["ukulele tuner", "online ukulele tuner", "uke tuner"],
+    "notes": ["G4", "C4", "E4", "A4"],
+    "faq": [
+      {
+        "question": "What is standard ukulele tuning?",
+        "answer": "Standard ukulele tuning is G-C-E-A. The G string is typically tuned higher than the C string (re-entrant tuning)."
+      },
+      {
+        "question": "How do I tune a ukulele online?",
+        "answer": "Allow microphone access, pluck each string, and adjust the tuning peg until the tuner shows the correct note in green."
+      },
+      {
+        "question": "Is this ukulele tuner free?",
+        "answer": "Yes, EasyTuner is completely free with no ads or registration required."
+      }
+    ]
+  }
+]

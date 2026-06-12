@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "how-to-tune-a-guitar",
+    "title": "How to Tune a Guitar",
+    "description": "Learn how to tune your guitar step by step using an online tuner, tuning fork, or reference pitch.",
+    "keywords": ["how to tune a guitar", "guitar tuning guide", "tune guitar for beginners"]
+  },
+  {
+    "slug": "guitar-string-frequencies",
+    "title": "Guitar String Frequencies",
+    "description": "Complete reference chart of standard guitar string frequencies in Hz for all six strings.",
+    "keywords": ["guitar tuning frequencies", "guitar string frequencies", "guitar hz chart"]
+  },
+  {
+    "slug": "standard-guitar-tuning",
+    "title": "Standard Guitar Tuning",
+    "description": "Everything you need to know about standard EADGBE guitar tuning, including history and common uses.",
+    "keywords": ["standard guitar tuning", "eadgbe tuning", "guitar standard tuning guide"]
+  },
+  {
+    "slug": "drop-d-vs-standard",
+    "title": "Drop D vs Standard Tuning",
+    "description": "Compare Drop D and standard guitar tuning to find which is right for your playing style and genre.",
+    "keywords": ["drop d vs standard", "drop d tuning comparison", "drop d or standard"]
+  }
+]

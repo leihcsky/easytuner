@@ -1,0 +1,25 @@
+[
+  {
+    "instrument": "violin",
+    "slug": "standard",
+    "name": "Standard",
+    "title": "Violin Tuner",
+    "description": "Free online violin tuner. Tune your violin to standard G-D-A-E using your microphone.",
+    "keywords": ["violin tuner", "online violin tuner", "fiddle tuner"],
+    "notes": ["G3", "D4", "A4", "E5"],
+    "faq": [
+      {
+        "question": "What is standard violin tuning?",
+        "answer": "Standard violin tuning is G-D-A-E from the lowest (4th) string to the highest (1st) string, tuned in perfect fifths."
+      },
+      {
+        "question": "How do I tune a violin online?",
+        "answer": "Bow or pluck each string near your device's microphone and adjust the fine tuners or pegs until the note matches."
+      },
+      {
+        "question": "Can I tune a violin with a microphone?",
+        "answer": "Yes, our online violin tuner uses your device's microphone to detect pitch accurately for each string."
+      }
+    ]
+  }
+]

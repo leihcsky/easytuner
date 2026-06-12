@@ -1,0 +1,117 @@
+[
+  {
+    "instrument": "guitar",
+    "slug": "standard",
+    "name": "Standard",
+    "title": "Standard Guitar Tuner",
+    "description": "Tune your guitar to standard EADGBE tuning with our free online guitar tuner.",
+    "keywords": ["standard guitar tuner", "eadgbe tuner", "guitar standard tuning"],
+    "notes": ["E2", "A2", "D3", "G3", "B3", "E4"],
+    "faq": [
+      {
+        "question": "What is standard guitar tuning?",
+        "answer": "Standard guitar tuning is E-A-D-G-B-E from the lowest (6th) string to the highest (1st) string. It is the most common tuning used in rock, pop, and folk music."
+      },
+      {
+        "question": "How do I tune to standard tuning?",
+        "answer": "Pluck each string and adjust the tuning peg until the tuner shows the correct note. Start with the low E string and work your way up to the high E string."
+      },
+      {
+        "question": "What frequency is the low E string?",
+        "answer": "The low E string (6th string) in standard tuning vibrates at approximately 82.41 Hz."
+      }
+    ]
+  },
+  {
+    "instrument": "guitar",
+    "slug": "drop-d",
+    "name": "Drop D",
+    "title": "Drop D Guitar Tuner",
+    "description": "Free online Drop D guitar tuner. Tune your guitar to D-A-D-G-B-E instantly using your microphone.",
+    "keywords": ["drop d tuner", "drop d guitar tuner", "online drop d tuner"],
+    "notes": ["D2", "A2", "D3", "G3", "B3", "E4"],
+    "faq": [
+      {
+        "question": "What is Drop D tuning?",
+        "answer": "Drop D tuning lowers the 6th string from E to D, giving you D-A-D-G-B-E. It is popular in rock and metal for heavier riffs and power chords."
+      },
+      {
+        "question": "How do I tune to Drop D?",
+        "answer": "Keep strings 5 through 1 in standard tuning. Lower the 6th string from E down to D until the tuner reads D2."
+      },
+      {
+        "question": "Why use Drop D tuning?",
+        "answer": "Drop D allows you to play power chords with one finger on the lowest three strings and provides a heavier, deeper sound for rock and metal genres."
+      }
+    ]
+  },
+  {
+    "instrument": "guitar",
+    "slug": "drop-c",
+    "name": "Drop C",
+    "title": "Drop C Guitar Tuner",
+    "description": "Free online Drop C guitar tuner. Tune your guitar to C-G-C-F-A-D for heavy metal and hard rock.",
+    "keywords": ["drop c tuner", "drop c guitar tuner", "online drop c tuner"],
+    "notes": ["C2", "G2", "C3", "F3", "A3", "D4"],
+    "faq": [
+      {
+        "question": "What is Drop C tuning?",
+        "answer": "Drop C tuning is C-G-C-F-A-D, with the 6th string dropped to C. It is commonly used in metal and hardcore music for a very heavy sound."
+      },
+      {
+        "question": "How do I tune to Drop C?",
+        "answer": "Lower all strings two whole steps from standard tuning, then drop the 6th string an additional whole step to C2."
+      },
+      {
+        "question": "Do I need heavier strings for Drop C?",
+        "answer": "Yes, heavier gauge strings (typically .011-.056 or thicker) are recommended for Drop C to maintain proper tension and tone."
+      }
+    ]
+  },
+  {
+    "instrument": "guitar",
+    "slug": "open-g",
+    "name": "Open G",
+    "title": "Open G Guitar Tuner",
+    "description": "Free online Open G guitar tuner. Tune your guitar to D-G-D-G-B-D for slide guitar and blues.",
+    "keywords": ["open g tuner", "open g guitar tuner", "online open g tuner"],
+    "notes": ["D2", "G2", "D3", "G3", "B3", "D4"],
+    "faq": [
+      {
+        "question": "What is Open G tuning?",
+        "answer": "Open G tuning is D-G-D-G-B-D. When strummed open, the strings form a G major chord. It is widely used in blues and slide guitar."
+      },
+      {
+        "question": "How do I tune to Open G?",
+        "answer": "Lower the 6th string to D, keep the 5th at G, lower the 4th to D, keep the 3rd at G, keep the 2nd at B, and lower the 1st string to D."
+      },
+      {
+        "question": "Who uses Open G tuning?",
+        "answer": "Keith Richards of The Rolling Stones and many blues guitarists use Open G tuning for its rich, resonant sound."
+      }
+    ]
+  },
+  {
+    "instrument": "guitar",
+    "slug": "dadgad",
+    "name": "DADGAD",
+    "title": "DADGAD Guitar Tuner",
+    "description": "Free online DADGAD guitar tuner. Tune your guitar to D-A-D-G-A-D for Celtic and folk music.",
+    "keywords": ["dadgad tuner", "dadgad guitar tuner", "online dadgad tuner"],
+    "notes": ["D2", "A2", "D3", "G3", "A3", "D4"],
+    "faq": [
+      {
+        "question": "What is DADGAD tuning?",
+        "answer": "DADGAD is an alternative tuning where the strings are tuned to D-A-D-G-A-D. It is popular in Celtic, folk, and fingerstyle guitar."
+      },
+      {
+        "question": "How do I tune to DADGAD?",
+        "answer": "Lower the 6th string to D, keep the 5th at A, keep the 4th at D, keep the 3rd at G, lower the 2nd to A, and lower the 1st string to D."
+      },
+      {
+        "question": "What music uses DADGAD tuning?",
+        "answer": "DADGAD is widely used in Irish and Scottish folk music, as well as by artists like Pierre Bensusan and Jimmy Page."
+      }
+    ]
+  }
+]
