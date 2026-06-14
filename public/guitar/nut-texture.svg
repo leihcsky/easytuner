@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="240" viewBox="0 0 120 240">
+  <defs>
+    <linearGradient id="base" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#9a7048"/>
+      <stop offset="25%" stop-color="#c9a06b"/>
+      <stop offset="50%" stop-color="#e8c9a0"/>
+      <stop offset="75%" stop-color="#c4a06a"/>
+      <stop offset="100%" stop-color="#8f6340"/>
+    </linearGradient>
+    <linearGradient id="grain" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6b4423" stop-opacity="0.15"/>
+      <stop offset="30%" stop-color="#6b4423" stop-opacity="0"/>
+      <stop offset="55%" stop-color="#6b4423" stop-opacity="0.12"/>
+      <stop offset="80%" stop-color="#6b4423" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#6b4423" stop-opacity="0.1"/>
+    </linearGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9 0.04" numOctaves="3" seed="8"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.4  0 0 0 0 0.28  0 0 0 0 0.15  0 0 0 0.08 0"/>
+    </filter>
+  </defs>
+  <rect width="120" height="240" fill="url(#base)"/>
+  <rect width="120" height="240" fill="url(#grain)"/>
+  <rect width="120" height="240" filter="url(#noise)" opacity="0.35"/>
+  <path d="M0 40 Q60 36 120 42 M0 88 Q55 92 120 86 M0 136 Q65 130 120 138 M0 184 Q50 188 120 182" fill="none" stroke="#5c3a14" stroke-opacity="0.12" stroke-width="2"/>
+</svg>

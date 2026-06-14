@@ -1,10 +1,9 @@
 "use client";
 
-import { useRef } from "react";
 import Link from "next/link";
-import { Hero } from "@/components/ui/Hero";
+import { CompactHero } from "@/components/ui/CompactHero";
 import { TunerTool } from "@/components/tuner/TunerTool";
-import { TuningSelector } from "@/components/tuner/TuningSelector";
+import { TuningSelectorCompact } from "@/components/tuner/TuningSelectorCompact";
 import { TuningChart } from "@/components/tuner/TuningChart";
 import { ReferenceTonePlayer } from "@/components/tuner/ReferenceTonePlayer";
 import { FAQ } from "@/components/ui/FAQ";
@@ -29,35 +28,21 @@ interface HomePageContentProps {
 }
 
 export function HomePageContent({ tuning, allTunings, faq }: HomePageContentProps) {
-  const tunerRef = useRef<HTMLDivElement>(null);
-
-  const scrollToTuner = () => {
-    tunerRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <>
-      <Hero
+      <CompactHero
         title="Online Guitar Tuner"
-        subtitle="Pluck any string — we detect it, guide you, and advance when you're in tune"
-        onStartTuning={scrollToTuner}
+        subtitle="Pluck a string on the fretboard — tune instantly with your microphone"
       />
 
-      <div className="mb-6">
-        <TuningSelector tunings={allTunings} activeSlug={tuning.slug} />
-      </div>
-
-      <div ref={tunerRef}>
-        <div className="mb-4 text-center max-w-xl mx-auto">
-          <h2 className="text-lg font-semibold text-gray-900">Smart Guitar Tuner</h2>
-          <p className="mt-1 text-sm text-gray-600">
-            Use <strong>Guide</strong> mode for step-by-step coaching, or switch to{" "}
-            <strong>Pro</strong> for strobe-precision tuning. Auto-detect, direction hints,
-            and session timer included.
-          </p>
-        </div>
-        <TunerTool notes={tuning.notes} stringLabelMode="number" />
-      </div>
+      <TunerTool
+        notes={tuning.notes}
+        stringLabelMode="number"
+        layout="home"
+        tuningSelector={
+          <TuningSelectorCompact tunings={allTunings} activeSlug={tuning.slug} />
+        }
+      />
 
       <ReferenceTonePlayer notes={tuning.notes} labelMode="number" />
 

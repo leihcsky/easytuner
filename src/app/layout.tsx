@@ -42,7 +42,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} font-sans`}>
         <Header />
-        <main className="mx-auto max-w-5xl px-4">{children}</main>
+        <main className="mx-auto max-w-6xl px-4">{children}</main>
         <Footer />
       </body>
     </html>

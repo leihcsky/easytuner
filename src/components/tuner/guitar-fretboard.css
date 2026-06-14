@@ -1,0 +1,335 @@
+/* VirtualGuitar-style layered neck: outer shell + headstock caps + inset fretboard */
+
+.guitar-fretboard {
+  --nut-width: 5rem;
+  --cap-width: 3.35rem;
+  --cap-height: 1.15rem;
+  --cap-offset-y: -0.85rem;
+  --cap-inset-right: 0.65rem;
+  --label-inset-right: 0.45rem;
+  --neck-bg: #2e2e2e;
+  --fretboard-bg: #404040;
+  --fret-color: #8f8f8f;
+  --fret-shadow: #454545;
+  --dot-color: #4a90e2;
+  --frame-inset-y: 0.5rem;
+  --frame-inset-right: 0.35rem;
+  --vg-string-scale: 0.55;
+}
+
+@media (min-width: 768px) {
+  .guitar-fretboard {
+    --nut-width: 5.75rem;
+    --cap-width: 3.65rem;
+    --cap-height: 1.25rem;
+    --cap-offset-y: -0.95rem;
+    --cap-inset-right: 0.75rem;
+    --label-inset-right: 0.55rem;
+    --frame-inset-y: 0.55rem;
+    --frame-inset-right: 0.4rem;
+    --vg-string-scale: 0.6;
+  }
+}
+
+/* Outer neck shell — guitar-neck-new */
+.guitar-neck-frame {
+  background: var(--neck-bg);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.guitar-fretboard-inner {
+  display: flex;
+  min-height: 7.25rem;
+}
+
+@media (min-width: 768px) {
+  .guitar-fretboard-inner {
+    min-height: 8.125rem;
+  }
+}
+
+/* Headstock / nut — full height, VG inset shadow on wood */
+.guitar-headstock {
+  position: relative;
+  width: var(--nut-width);
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: inset -10px 0 30px rgba(92, 58, 12, 0.3);
+  z-index: 2;
+}
+
+.guitar-nut-texture {
+  position: absolute;
+  inset: 0;
+  background-color: #c4a06a;
+  background-image:
+    url("/guitar/nut-texture.webp"),
+    url("/guitar/nut-texture.svg"),
+    repeating-linear-gradient(
+      92deg,
+      transparent,
+      transparent 3px,
+      rgba(80, 50, 20, 0.07) 3px,
+      rgba(80, 50, 20, 0.07) 4px
+    ),
+    linear-gradient(
+      180deg,
+      #a67c52 0%,
+      #d4a574 18%,
+      #e8c9a0 42%,
+      #c9a06b 68%,
+      #9a7048 100%
+    );
+  background-size: cover;
+  background-position: center left;
+}
+
+.guitar-nut-edge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, #f5f0e6, #e8dfd0, #f5f0e6);
+  box-shadow: 1px 0 2px rgba(0, 0, 0, 0.35);
+  z-index: 2;
+}
+
+/* Semicircle caps — wide flat ellipses, white, near note labels (right side) */
+.guitar-headstock::before,
+.guitar-headstock::after {
+  content: "";
+  position: absolute;
+  width: var(--cap-width);
+  height: var(--cap-height);
+  border-radius: 50%;
+  background-color: #fff;
+  right: var(--cap-inset-right);
+  left: auto;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.guitar-headstock::before {
+  top: var(--cap-offset-y);
+}
+
+.guitar-headstock::after {
+  bottom: var(--cap-offset-y);
+}
+
+/* Neck column — padding reveals dark outer shell as border */
+.guitar-neck {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  padding: var(--frame-inset-y) var(--frame-inset-right) var(--frame-inset-y) 0;
+  background: transparent;
+}
+
+/* Inset playing surface — guitar-neck-new > ul (#404040) */
+.guitar-fretboard-inset {
+  position: relative;
+  flex: 1;
+  background: var(--fretboard-bg);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.guitar-fretboard-surface {
+  position: absolute;
+  inset: 0;
+  background-color: var(--fretboard-bg);
+  background-image:
+    url("/guitar/fretboard-texture.webp"),
+    url("/guitar/fretboard-texture.svg"),
+    linear-gradient(180deg, #484848 0%, var(--fretboard-bg) 45%, #383838 100%);
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}
+
+.guitar-fret {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #b8b8b8, var(--fret-color) 30%, var(--fret-color) 70%, #6a6a6a);
+  opacity: 0.65;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.guitar-fret-shadow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--fret-shadow);
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.guitar-fret-dot {
+  position: absolute;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--dot-color);
+  opacity: 0.92;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 1px 4px rgba(0, 0, 0, 0.45);
+}
+
+/* VirtualGuitar string style */
+.guitar-string {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 1px;
+  height: calc(3px * var(--vg-string-scale));
+  box-shadow: 0.04em 0.37em 0.02em 0 rgba(0, 0, 0, 0.1);
+  background-image:
+    repeating-linear-gradient(
+      50deg,
+      rgba(0, 0, 0, 0.6),
+      transparent 0.15em,
+      transparent 0.2em
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.1) 10%,
+      hsla(0, 0%, 100%, 0.25) 15%,
+      hsla(0, 0%, 100%, 0.8) 30%,
+      hsla(0, 0%, 100%, 0.25) 45%,
+      rgba(0, 0, 0, 0.6) 90%
+    );
+  transition: box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.guitar-strings-layer > .guitar-string-row:nth-child(4) .guitar-string {
+  height: calc(4px * var(--vg-string-scale));
+}
+
+.guitar-strings-layer > .guitar-string-row:nth-child(5) .guitar-string {
+  height: calc(5px * var(--vg-string-scale));
+}
+
+.guitar-strings-layer > .guitar-string-row:nth-child(6) .guitar-string {
+  height: calc(6px * var(--vg-string-scale));
+}
+
+.guitar-string--active.guitar-string--state-untuned {
+  box-shadow:
+    0 0 0 1px rgba(156, 163, 175, 0.5),
+    0 0 10px rgba(156, 163, 175, 0.45),
+    0.04em 0.37em 0.02em 0 rgba(0, 0, 0, 0.12);
+}
+
+.guitar-string--active.guitar-string--state-close {
+  box-shadow:
+    0 0 0 1px rgba(245, 158, 11, 0.55),
+    0 0 12px rgba(245, 158, 11, 0.5),
+    0.04em 0.37em 0.02em 0 rgba(0, 0, 0, 0.12);
+}
+
+.guitar-string--active.guitar-string--state-in-tune {
+  box-shadow:
+    0 0 0 1px rgba(34, 197, 94, 0.55),
+    0 0 12px rgba(34, 197, 94, 0.5),
+    0.04em 0.37em 0.02em 0 rgba(0, 0, 0, 0.12);
+}
+
+.guitar-string-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+}
+
+.guitar-string-track:hover .guitar-string {
+  filter: brightness(1.08);
+}
+
+.guitar-string-track:focus-visible {
+  outline: 2px solid rgba(34, 197, 94, 0.6);
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
+.guitar-nut-label {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--nut-width);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: var(--label-inset-right);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
+  z-index: 5;
+  pointer-events: none;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.55);
+  color: #3d2b1f;
+}
+
+.guitar-nut-label--active {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.85);
+}
+
+/* Overlay aligned to inset fretboard area */
+.guitar-strings-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding:
+    calc(var(--frame-inset-y) + 0.15rem)
+    calc(var(--frame-inset-right) + 0.35rem)
+    calc(var(--frame-inset-y) + 0.15rem)
+    0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.guitar-string-row,
+.guitar-string-track {
+  pointer-events: auto;
+}
+
+.guitar-string-track {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  margin-left: var(--nut-width);
+  padding-right: 1.25rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.guitar-in-tune-mark {
+  position: absolute;
+  right: calc(var(--frame-inset-right) + 0.35rem);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #22c55e;
+  line-height: 1;
+  z-index: 5;
+  pointer-events: none;
+}
