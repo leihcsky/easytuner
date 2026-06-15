@@ -2,6 +2,13 @@ import { noteToFrequency } from "./notes";
 
 let audioContext: AudioContext | null = null;
 
+type ActiveReferenceTone = {
+  oscillator: OscillatorNode;
+  gainNode: GainNode;
+};
+
+let activeReferenceTone: ActiveReferenceTone | null = null;
+
 function getAudioContext(): AudioContext {
   if (!audioContext) {
     audioContext = new AudioContext();
@@ -9,24 +16,64 @@ function getAudioContext(): AudioContext {
   return audioContext;
 }
 
-export function playReferenceTone(note: string, duration = 1.5): void {
+export const REFERENCE_TONE_DURATION = 1.5;
+
+export function stopReferenceTone(): void {
+  if (!activeReferenceTone) return;
+  const { oscillator, gainNode } = activeReferenceTone;
+  const ctx = gainNode.context;
+  const now = ctx.currentTime;
+  gainNode.gain.cancelScheduledValues(now);
+  gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+  gainNode.gain.linearRampToValueAtTime(0, now + 0.04);
+  oscillator.stop(now + 0.05);
+  activeReferenceTone = null;
+}
+
+function startReferenceOscillator(note: string, sustain: boolean, duration = REFERENCE_TONE_DURATION): void {
+  stopReferenceTone();
+
   const ctx = getAudioContext();
   const frequency = noteToFrequency(note);
-
   const oscillator = ctx.createOscillator();
   const gainNode = ctx.createGain();
 
   oscillator.type = "sine";
   oscillator.frequency.value = frequency;
 
-  gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+  const now = ctx.currentTime;
+  gainNode.gain.setValueAtTime(0, now);
+  gainNode.gain.linearRampToValueAtTime(0.28, now + 0.02);
+
+  if (!sustain) {
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    oscillator.stop(now + duration);
+    oscillator.onended = () => {
+      if (activeReferenceTone?.oscillator === oscillator) {
+        activeReferenceTone = null;
+      }
+    };
+  }
 
   oscillator.connect(gainNode);
   gainNode.connect(ctx.destination);
+  oscillator.start(now);
 
-  oscillator.start(ctx.currentTime);
-  oscillator.stop(ctx.currentTime + duration);
+  activeReferenceTone = { oscillator, gainNode };
+}
+
+/** One-shot reference tone (~1.5s). */
+export function playReferenceTone(note: string, duration = REFERENCE_TONE_DURATION): void {
+  startReferenceOscillator(note, false, duration);
+}
+
+/** Sustained reference tone until stopReferenceTone(). */
+export function playReferenceToneLoop(note: string): void {
+  startReferenceOscillator(note, true);
+}
+
+export function isReferenceTonePlaying(): boolean {
+  return activeReferenceTone !== null;
 }
 
 export async function playAllNotes(notes: string[], gap = 0.5): Promise<void> {

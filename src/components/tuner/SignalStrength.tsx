@@ -6,7 +6,6 @@ interface SignalStrengthProps {
 
 export function SignalStrength({ bars, label, isListening }: SignalStrengthProps) {
   const activeBars = isListening ? bars : 0;
-  const activeLabel = isListening ? label : "Mic off";
 
   return (
     <div className="flex items-center gap-3 min-h-[1.25rem]">
@@ -22,7 +21,7 @@ export function SignalStrength({ bars, label, isListening }: SignalStrengthProps
           />
         ))}
       </div>
-      <span className="text-xs text-gray-600 w-[4.75rem] shrink-0">{activeLabel}</span>
+      <span className="text-xs text-gray-600 w-[4.75rem] shrink-0">{label}</span>
     </div>
   );
 }

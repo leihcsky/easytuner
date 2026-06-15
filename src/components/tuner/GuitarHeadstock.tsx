@@ -40,7 +40,11 @@ export function GuitarHeadstock({
           const isActive = activeString === index;
           const persisted = stringStates[index];
           const displayState =
-            isActive && liveState && persisted !== "in-tune" ? liveState : persisted;
+            persisted === "in-tune"
+              ? "in-tune"
+              : isActive && liveState
+                ? liveState
+                : persisted;
 
           return (
             <button
@@ -62,7 +66,7 @@ export function GuitarHeadstock({
                   : getNoteDisplay(note)}
               </span>
               <span className="h-0.5 flex-1 rounded bg-gray-400/50" />
-              {displayState === "in-tune" ? (
+              {persisted === "in-tune" ? (
                 <span className="text-brand-600 text-sm font-bold">✓</span>
               ) : isActive ? (
                 <span className="text-xs font-medium text-brand-700">●</span>

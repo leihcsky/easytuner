@@ -9,9 +9,9 @@ interface GuitarFretboardProps {
   activeString: number;
   stringStates: StringTuneState[];
   liveState?: StringTuneState;
+  playingStringIndex?: number | null;
   onSelectString: (index: number) => void;
-  onRequestMic?: () => void;
-  isListening: boolean;
+  onPlayReference?: (index: number) => void;
 }
 
 /** Fret wire positions (% of inset fretboard width). */
@@ -26,7 +26,8 @@ function displayStateFor(
   liveState?: StringTuneState
 ): StringTuneState {
   const persisted = stringStates[index];
-  if (activeString === index && liveState && persisted !== "in-tune") return liveState;
+  if (persisted === "in-tune") return "in-tune";
+  if (activeString === index && liveState) return liveState;
   return persisted;
 }
 
@@ -40,24 +41,21 @@ export function GuitarFretboard({
   activeString,
   stringStates,
   liveState,
+  playingStringIndex = null,
   onSelectString,
-  onRequestMic,
-  isListening,
+  onPlayReference,
 }: GuitarFretboardProps) {
   const visualOrder = notes.map((_, i) => notes.length - 1 - i);
 
   return (
     <div className="guitar-fretboard relative w-full select-none">
-      {/* VG-style outer neck shell (#2E2E2E) */}
       <div className="guitar-neck-frame">
         <div className="guitar-fretboard-inner" role="img" aria-label="Guitar fretboard">
-          {/* Headstock / nut — semicircle caps mask top & bottom (VG headstock :before/:after) */}
           <div className="guitar-headstock" aria-hidden>
             <div className="guitar-nut-texture" />
             <div className="guitar-nut-edge" />
           </div>
 
-          {/* Fretboard column — dark frame shows through padding as border */}
           <div className="guitar-neck">
             <div className="guitar-fretboard-inset">
               <div className="guitar-fretboard-surface" aria-hidden />
@@ -75,25 +73,41 @@ export function GuitarFretboard({
         </div>
       </div>
 
-      {/* Strings + note labels + interaction */}
       <div className="guitar-strings-layer">
         {visualOrder.map((noteIndex) => {
           const state = displayStateFor(noteIndex, activeString, stringStates, liveState);
           const isActive = activeString === noteIndex;
+          const isPlaying = playingStringIndex === noteIndex;
+          const noteLabel = getNoteDisplay(notes[noteIndex]);
+
           return (
             <div key={noteIndex} className="guitar-string-row">
-              <span
-                className={`guitar-nut-label ${isActive ? "guitar-nut-label--active" : ""}`}
-                aria-hidden
-              >
-                {getNoteDisplay(notes[noteIndex])}
-              </span>
+              <div className="guitar-nut-cell">
+                {onPlayReference && (
+                  <button
+                    type="button"
+                    className={`guitar-nut-play ${isPlaying ? "guitar-nut-play--playing" : ""}`}
+                    onClick={() => onPlayReference(noteIndex)}
+                    aria-label={`Play ${noteLabel} reference tone`}
+                  >
+                    <SpeakerIcon />
+                  </button>
+                )}
+                <span
+                  className={`guitar-nut-note ${isActive ? "guitar-nut-note--active" : ""} ${
+                    isPlaying ? "guitar-nut-note--playing" : ""
+                  }`}
+                  aria-hidden
+                >
+                  {noteLabel}
+                </span>
+              </div>
 
               <button
                 type="button"
-                className="guitar-string-track"
+                className={`guitar-string-track ${isPlaying ? "guitar-string-track--playing" : ""}`}
                 onClick={() => onSelectString(noteIndex)}
-                aria-label={`${getNoteDisplay(notes[noteIndex])} string`}
+                aria-label={`Select ${noteLabel} string`}
                 aria-current={isActive ? "true" : undefined}
               >
                 <span
@@ -107,7 +121,7 @@ export function GuitarFretboard({
                 />
               </button>
 
-              {state === "in-tune" && (
+              {stringStates[noteIndex] === "in-tune" && (
                 <span className="guitar-in-tune-mark" aria-hidden>
                   ✓
                 </span>
@@ -116,27 +130,14 @@ export function GuitarFretboard({
           );
         })}
       </div>
-
-      {!isListening && onRequestMic && (
-        <button
-          type="button"
-          onClick={onRequestMic}
-          className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-black/40 backdrop-blur-[1px] transition-opacity hover:bg-black/50"
-        >
-          <span className="flex items-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-lg">
-            <MicIcon />
-            Tap to tune
-          </span>
-        </button>
-      )}
     </div>
   );
 }
 
-function MicIcon() {
+function SpeakerIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z" />
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.06c1.48-.74 2.5-2.26 2.5-4.03zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
     </svg>
   );
 }

@@ -10,7 +10,7 @@ interface TuningCompleteProps {
 export function TuningComplete({ total, elapsedMs, onReset, compact }: TuningCompleteProps) {
   if (compact) {
     return (
-      <div className="col-span-2 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 flex items-center justify-between gap-3 min-h-[2.25rem]">
+      <div className="rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 flex items-center justify-between gap-3 min-h-[2.25rem]">
         <div className="min-w-0">
           <p className="text-xs font-semibold text-brand-700 truncate">
             All {total} strings tuned! ✓

@@ -8,6 +8,7 @@ interface StrobeTunerProps {
   status: TuningStatus;
   isListening: boolean;
   targetLabel: string;
+  compact?: boolean;
 }
 
 export function StrobeTuner({
@@ -17,6 +18,7 @@ export function StrobeTuner({
   status,
   isListening,
   targetLabel,
+  compact,
 }: StrobeTunerProps) {
   const inTune = status === "in-tune" && isListening && frequency > 0;
   const absCents = Math.abs(cents);
@@ -31,14 +33,19 @@ export function StrobeTuner({
         ? "border-orange-400"
         : "border-gray-300";
 
+  const ringSize = compact ? "w-44 h-44" : "w-52 h-52";
+  const innerInset = compact ? "inset-2.5" : "inset-3";
+
   return (
-    <div className="text-center">
-      <p className="text-xs font-medium text-gray-500 mb-3 uppercase tracking-wide">
-        Pro Strobe · Target {targetLabel}
-      </p>
+    <div className={`text-center h-full min-h-[10.5rem] flex flex-col items-center justify-center ${compact ? "" : ""}`}>
+      {!compact && (
+        <p className="text-xs font-medium text-gray-500 mb-3 uppercase tracking-wide">
+          Pro Strobe · Target {targetLabel}
+        </p>
+      )}
 
       <div
-        className={`relative mx-auto w-52 h-52 rounded-full border-4 overflow-hidden transition-colors ${ringClass}`}
+        className={`relative mx-auto ${ringSize} rounded-full border-4 overflow-hidden transition-colors ${ringClass}`}
       >
         <div
           className="absolute inset-0"
@@ -52,10 +59,10 @@ export function StrobeTuner({
             animationDirection: rotateDirection,
           }}
         />
-        <div className="absolute inset-3 rounded-full bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center shadow-inner">
+        <div className={`absolute ${innerInset} rounded-full bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center shadow-inner`}>
           {isListening ? (
             <>
-              <p className="text-4xl font-mono font-bold text-gray-900 tabular-nums">
+              <p className={`font-mono font-bold text-gray-900 tabular-nums ${compact ? "text-3xl" : "text-4xl"}`}>
                 {frequency > 0 ? (
                   <>
                     {cents > 0 ? "+" : ""}
@@ -66,7 +73,7 @@ export function StrobeTuner({
                   "—"
                 )}
               </p>
-              <p className="text-2xl font-bold text-gray-800 mt-1">
+              <p className={`font-bold text-gray-800 mt-1 ${compact ? "text-xl" : "text-2xl"}`}>
                 {detectedNote ? getNoteDisplay(detectedNote) : "—"}
               </p>
               <p className="text-xs text-gray-500 mt-1">
@@ -82,16 +89,18 @@ export function StrobeTuner({
               )}
             </>
           ) : (
-            <p className="text-sm text-gray-500 px-4">Enable mic for strobe tuning</p>
+            <p className={`text-gray-400 ${compact ? "text-xs px-3" : "text-sm px-4"}`}>—</p>
           )}
         </div>
       </div>
 
-      <p className="mt-3 text-xs text-gray-500">
-        {inTune
-          ? "Strobe stopped — pitch is locked"
-          : "Spinning stripes slow down as you approach the target pitch"}
-      </p>
+      {!compact && (
+        <p className="mt-3 text-xs text-gray-500">
+          {inTune
+            ? "Strobe stopped — pitch is locked"
+            : "Spinning stripes slow down as you approach the target pitch"}
+        </p>
+      )}
     </div>
   );
 }

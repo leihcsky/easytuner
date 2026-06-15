@@ -5,7 +5,6 @@ import { Hero } from "@/components/ui/Hero";
 import { TunerTool } from "@/components/tuner/TunerTool";
 import { TuningSelector } from "@/components/tuner/TuningSelector";
 import { TuningChart } from "@/components/tuner/TuningChart";
-import { ReferenceTonePlayer } from "@/components/tuner/ReferenceTonePlayer";
 import { FAQ } from "@/components/ui/FAQ";
 import { RelatedTunings } from "@/components/ui/RelatedTunings";
 import type { Tuning } from "@/types/tuning";
@@ -53,8 +52,6 @@ export function TunerPageContent({
         notes={tuning.notes}
         title={chartTitle ?? `${tuning.name} Tuning Chart`}
       />
-
-      <ReferenceTonePlayer notes={tuning.notes} />
 
       <FAQ items={tuning.faq} />
 

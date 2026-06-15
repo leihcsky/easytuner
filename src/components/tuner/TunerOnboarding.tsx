@@ -21,7 +21,7 @@ const STEPS = [
   },
   {
     title: "Turn the tuning peg",
-    body: "Follow the Turn Peg ↑ or ↓ hint until the string turns green.",
+    body: "Follow the Tune up or Tune down hint until the string turns green.",
   },
 ];
 

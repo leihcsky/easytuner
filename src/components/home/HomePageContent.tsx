@@ -5,7 +5,6 @@ import { CompactHero } from "@/components/ui/CompactHero";
 import { TunerTool } from "@/components/tuner/TunerTool";
 import { TuningSelectorCompact } from "@/components/tuner/TuningSelectorCompact";
 import { TuningChart } from "@/components/tuner/TuningChart";
-import { ReferenceTonePlayer } from "@/components/tuner/ReferenceTonePlayer";
 import { FAQ } from "@/components/ui/FAQ";
 import {
   HowToTuneSection,
@@ -32,7 +31,7 @@ export function HomePageContent({ tuning, allTunings, faq }: HomePageContentProp
     <>
       <CompactHero
         title="Online Guitar Tuner"
-        subtitle="Pluck a string on the fretboard — tune instantly with your microphone"
+        subtitle="Tap 🔊 on the fretboard to hear pitches, or use Tap to tune for mic detection"
       />
 
       <TunerTool
@@ -43,8 +42,6 @@ export function HomePageContent({ tuning, allTunings, faq }: HomePageContentProp
           <TuningSelectorCompact tunings={allTunings} activeSlug={tuning.slug} />
         }
       />
-
-      <ReferenceTonePlayer notes={tuning.notes} labelMode="number" />
 
       <TuningChart
         notes={tuning.notes}

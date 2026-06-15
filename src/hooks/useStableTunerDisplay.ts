@@ -98,7 +98,7 @@ export function useStableTunerDisplay(
   }, [clarity, frequency, cents, detectedNote, isListening]);
 
   const bars = !isListening ? 0 : hasSignal ? 4 : 1;
-  const label = !isListening ? "Mic off" : hasSignal ? "Detected" : "Ready";
+  const label = !isListening ? "By ear" : hasSignal ? "Detected" : "Ready";
 
   return {
     bars,
