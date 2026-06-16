@@ -18,61 +18,40 @@ import {
   isPitchCandidateValid,
   PitchGate,
 } from "@/lib/pitch-gate";
-import { playSuccessChime, playReferenceTone, playReferenceToneLoop, stopReferenceTone, REFERENCE_TONE_DURATION } from "@/lib/audio";
+import { playSuccessChime, playReferenceTone, playReferenceToneLoop, stopReferenceTone } from "@/lib/audio";
+import { getReferenceAudioUrl } from "@/lib/reference-audio";
 import { GuitarHeadstock } from "@/components/tuner/GuitarHeadstock";
 import { GuitarFretboard } from "@/components/tuner/GuitarFretboard";
 import { TuningProgressBar } from "@/components/tuner/TuningProgressBar";
 import { SignalStrength } from "@/components/tuner/SignalStrength";
 import { useStableTunerDisplay } from "@/hooks/useStableTunerDisplay";
-import { PrecisionMeter } from "@/components/tuner/PrecisionMeter";
 import { StrobeTuner } from "@/components/tuner/StrobeTuner";
 import { TuneDirectionHint } from "@/components/tuner/TuneDirectionHint";
-import { TunerModeSwitch } from "@/components/tuner/TunerModeSwitch";
+import { AutoAdvanceToggle } from "@/components/tuner/AutoAdvanceToggle";
 import { ReferenceLoopToggle } from "@/components/tuner/ReferenceLoopToggle";
-import { TunerModeToggle } from "@/components/tuner/TunerModeToggle";
 import { TunerSidebar } from "@/components/tuner/TunerSidebar";
 import { TunerOnboarding } from "@/components/tuner/TunerOnboarding";
 import { TuningComplete } from "@/components/tuner/TuningComplete";
 import { TuningSessionTimer } from "@/components/tuner/TuningSessionTimer";
-import type { StringTuneState, TunerDisplayMode, TuningStatus } from "@/types/tuning";
+import type { StringTuneState, TuningStatus } from "@/types/tuning";
 
 const CLOSE_THRESHOLD = 15;
 const AUTO_DETECT_MAX_CENTS = 50;
 const ADVANCE_DELAY_MS = 1000;
-/** Consecutive matching frames + minimum duration before persisting ✓. */
-const IN_TUNE_LOCK_FRAMES = 8;
-const IN_TUNE_LOCK_MS = 250;
-const PRO_IN_TUNE_LOCK_FRAMES = 5;
-const PRO_IN_TUNE_LOCK_MS = 180;
-
-function lockRequirements(mode: TunerDisplayMode): {
-  frames: number;
-  ms: number;
-  gateMinStreak: number;
-  gateMinMs: number;
-} {
-  if (mode === "pro") {
-    return {
-      frames: PRO_IN_TUNE_LOCK_FRAMES,
-      ms: PRO_IN_TUNE_LOCK_MS,
-      gateMinStreak: Math.ceil(PRO_IN_TUNE_LOCK_FRAMES * 0.4),
-      gateMinMs: PRO_IN_TUNE_LOCK_MS * 0.45,
-    };
-  }
-  return {
-    frames: IN_TUNE_LOCK_FRAMES,
-    ms: IN_TUNE_LOCK_MS,
-    gateMinStreak: Math.ceil(IN_TUNE_LOCK_FRAMES / 2),
-    gateMinMs: IN_TUNE_LOCK_MS * 0.6,
-  };
-}
+const IN_TUNE_LOCK_FRAMES = 6;
+const IN_TUNE_LOCK_MS = 200;
+const GATE_LOCK_MIN_STREAK = Math.ceil(IN_TUNE_LOCK_FRAMES / 2);
+const GATE_LOCK_MIN_MS = IN_TUNE_LOCK_MS * 0.55;
 
 interface TunerToolProps {
   notes: string[];
+  instrument?: string;
+  tuningSlug?: string;
   id?: string;
   stringLabelMode?: "note" | "number";
   layout?: "default" | "home";
   tuningSelector?: ReactNode;
+  showGuideSidebar?: boolean;
 }
 
 function initialStringStates(count: number): StringTuneState[] {
@@ -111,13 +90,16 @@ function guideHintText(
 
 export function TunerTool({
   notes,
+  instrument,
+  tuningSlug,
   id = "tuner-tool",
   stringLabelMode = "note",
   layout = "default",
   tuningSelector,
+  showGuideSidebar = false,
 }: TunerToolProps) {
   const isHome = layout === "home";
-  const [displayMode, setDisplayMode] = useState<TunerDisplayMode>("guided");
+  const [autoAdvance, setAutoAdvance] = useState(true);
   const [isListening, setIsListening] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [activeString, setActiveString] = useState(0);
@@ -134,6 +116,9 @@ export function TunerTool({
   const [finalElapsedMs, setFinalElapsedMs] = useState(0);
   const [playingStringIndex, setPlayingStringIndex] = useState<number | null>(null);
   const [referenceLoop, setReferenceLoop] = useState(false);
+
+  const autoAdvanceRef = useRef(autoAdvance);
+  autoAdvanceRef.current = autoAdvance;
 
   const streamRef = useRef<MediaStream | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -159,10 +144,6 @@ export function TunerTool({
   activeStringRef.current = activeString;
   notesRef.current = notes;
   stringStatesRef.current = stringStates;
-
-  const isGuided = displayMode === "guided";
-  const displayModeRef = useRef(displayMode);
-  displayModeRef.current = displayMode;
 
   const tunedCount = stringStates.filter((s) => s === "in-tune").length;
   const display = useStableTunerDisplay(
@@ -232,16 +213,24 @@ export function TunerTool({
 
     if (pitchGateRef.current.isOpen && rawPitch > 0 && candidateValid) {
       const currentNotes = notesRef.current;
+      const activeIdx = activeStringRef.current;
       const closest = findClosestStringIndex(rawPitch, currentNotes);
       const closestTarget = currentNotes[closest];
       const closestCents = getStringCentsDeviation(rawPitch, closestTarget);
 
-      let stringIdx = activeStringRef.current;
-      if (closestCents <= AUTO_DETECT_MAX_CENTS) {
+      // Coach mode: stay on the guided target. Free mode: only jump after current string is ✓.
+      let stringIdx = activeIdx;
+      const activeIsLocked = stringStatesRef.current[activeIdx] === "in-tune";
+      if (
+        !autoAdvanceRef.current &&
+        activeIsLocked &&
+        closest !== activeIdx &&
+        closestCents <= AUTO_DETECT_MAX_CENTS
+      ) {
         stringIdx = closest;
       }
 
-      if (stringIdx !== activeStringRef.current) {
+      if (stringIdx !== activeIdx) {
         activeStringRef.current = stringIdx;
         setActiveString(stringIdx);
         resetLockTracking();
@@ -259,12 +248,10 @@ export function TunerTool({
       setCents(targetCents);
       setStatus(tuningStatus);
 
-      const mode = displayModeRef.current;
-      const { frames: lockFrames, ms: lockMs } = lockRequirements(mode);
       let lockTargetIdx: number | null = null;
 
-      if (stringIdx === closest && pitchLocksTargetNote(rawPitch, closestTarget)) {
-        lockTargetIdx = closest;
+      if (pitchLocksTargetNote(rawPitch, target)) {
+        lockTargetIdx = stringIdx;
       }
 
       if (lockTargetIdx !== null) {
@@ -283,7 +270,10 @@ export function TunerTool({
             ? performance.now() - lockStartMsRef.current
             : 0;
 
-        if (inTuneStreakRef.current >= lockFrames && lockElapsed >= lockMs) {
+        if (
+          inTuneStreakRef.current >= IN_TUNE_LOCK_FRAMES &&
+          lockElapsed >= IN_TUNE_LOCK_MS
+        ) {
           persistStringLock(lockTargetIdx, rawPitch, currentNotes);
         }
       } else if (lockedStringRef.current !== null) {
@@ -301,14 +291,12 @@ export function TunerTool({
         lockStartMsRef.current !== null
           ? performance.now() - lockStartMsRef.current
           : 0;
-      const { gateMinStreak, gateMinMs } = lockRequirements(displayModeRef.current);
-
       if (
         pending !== null &&
         lastGood &&
         lastGood.closest === pending &&
-        inTuneStreakRef.current >= gateMinStreak &&
-        lockElapsed >= gateMinMs
+        inTuneStreakRef.current >= GATE_LOCK_MIN_STREAK &&
+        lockElapsed >= GATE_LOCK_MIN_MS
       ) {
         persistStringLock(pending, lastGood.pitch, notesRef.current);
       }
@@ -345,10 +333,9 @@ export function TunerTool({
       detectorRef.current = PitchDetector.forFloat32Array(analyser.fftSize);
       pitchGateRef.current.reset();
 
-      const startIdx =
-        displayModeRef.current === "guided"
-          ? firstUntunedIndex(stringStates)
-          : activeStringRef.current;
+      const startIdx = autoAdvanceRef.current
+        ? firstUntunedIndex(stringStates)
+        : activeStringRef.current;
       setActiveString(startIdx);
       activeStringRef.current = startIdx;
 
@@ -406,7 +393,6 @@ export function TunerTool({
 
   useEffect(() => {
     const prev = prevStringStatesRef.current;
-    const guided = displayModeRef.current === "guided";
 
     stringStates.forEach((state, i) => {
       if (state === "in-tune" && prev[i] !== "in-tune") {
@@ -416,7 +402,7 @@ export function TunerTool({
     prevStringStatesRef.current = stringStates;
 
     if (
-      guided &&
+      autoAdvanceRef.current &&
       stringStates.length > 0 &&
       stringStates.every((s) => s === "in-tune")
     ) {
@@ -427,11 +413,12 @@ export function TunerTool({
         setElapsedMs(final);
       }
     }
-  }, [stringStates, displayMode]);
+  }, [stringStates]);
 
   useEffect(() => {
-    if (displayMode !== "guided") {
+    if (!autoAdvance) {
       if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+      if (isComplete) setIsComplete(false);
       prevForAdvanceRef.current = stringStates;
       return;
     }
@@ -464,7 +451,7 @@ export function TunerTool({
     return () => {
       if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
     };
-  }, [stringStates, activeString, isComplete, displayMode]);
+  }, [stringStates, activeString, isComplete, autoAdvance]);
 
   useEffect(() => {
     const fresh = initialStringStates(notes.length);
@@ -477,12 +464,6 @@ export function TunerTool({
     prevStringStatesRef.current = fresh;
     prevForAdvanceRef.current = fresh;
   }, [notes]);
-
-  useEffect(() => {
-    if (displayMode === "pro" && isComplete) {
-      setIsComplete(false);
-    }
-  }, [displayMode, isComplete]);
 
   useEffect(() => {
     if (!referenceLoop) {
@@ -528,74 +509,80 @@ export function TunerTool({
       stopReferenceTone();
       if (playReferenceTimeoutRef.current) clearTimeout(playReferenceTimeoutRef.current);
 
+      const note = notes[index];
+      const audioUrl =
+        instrument && tuningSlug
+          ? getReferenceAudioUrl(instrument, tuningSlug, index, note)
+          : undefined;
+
+      const clearPlaying = () => {
+        setPlayingStringIndex(null);
+        playReferenceTimeoutRef.current = null;
+      };
+
       if (referenceLoop) {
-        playReferenceToneLoop(notes[index]);
+        playReferenceToneLoop({ note, audioUrl });
         setPlayingStringIndex(index);
         return;
       }
 
-      playReferenceTone(notes[index]);
+      playReferenceTone({
+        note,
+        audioUrl,
+        onEnded: clearPlaying,
+      });
       setPlayingStringIndex(index);
-      playReferenceTimeoutRef.current = setTimeout(() => {
-        setPlayingStringIndex(null);
-        playReferenceTimeoutRef.current = null;
-      }, REFERENCE_TONE_DURATION * 1000);
+      if (!audioUrl) {
+        playReferenceTimeoutRef.current = setTimeout(clearPlaying, 1500);
+      }
     },
-    [notes, referenceLoop, playingStringIndex]
+    [notes, instrument, tuningSlug, referenceLoop, playingStringIndex]
   );
 
-  const defaultMeterPanel =
-    displayMode === "guided" ? (
-      <PrecisionMeter
-        cents={display.displayCents}
-        detectedNote={display.displayNote}
-        frequency={display.displayFrequency}
-        status={display.status}
-        isListening={isListening}
-        centered
-        targetNote={notes[activeString]}
-      />
-    ) : (
-      <StrobeTuner
-        cents={display.displayCents}
-        detectedNote={display.displayNote}
-        frequency={display.displayFrequency}
-        status={display.status}
-        isListening={isListening}
-        targetLabel={targetLabel}
-      />
-    );
-
-  const sidebarEl = tuningSelector ? (
-    <TunerSidebar
-      tuningSelector={tuningSelector}
-      displayMode={displayMode}
-      onDisplayModeChange={setDisplayMode}
+  const meterPanel = (
+    <StrobeTuner
+      cents={display.displayCents}
+      detectedNote={display.displayNote}
+      frequency={display.displayFrequency}
+      status={display.status}
+      isListening={isListening}
+      targetLabel={targetLabel}
+      targetNote={notes[activeString]}
+      compact={isHome}
     />
-  ) : null;
+  );
+
+  const sidebarEl =
+    tuningSelector || showGuideSidebar ? (
+      <TunerSidebar
+        tuningSelector={tuningSelector}
+        autoAdvance={autoAdvance}
+        onAutoAdvanceChange={setAutoAdvance}
+      />
+    ) : null;
 
   if (isHome) {
     return (
       <section id={id} className="py-0">
         <div className="rounded-xl border border-gray-200 bg-white p-3 md:p-4 shadow-sm">
-          {tuningSelector && (
+          {(tuningSelector || showGuideSidebar) && (
             <div className="lg:hidden space-y-2 mb-3">
               {tuningSelector}
-              <TunerModeSwitch
-                displayMode={displayMode}
-                onDisplayModeChange={setDisplayMode}
-                className="w-full"
+              <AutoAdvanceToggle
+                enabled={autoAdvance}
+                onChange={setAutoAdvance}
+                className="px-1"
               />
             </div>
           )}
 
           <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
             <div className="flex-1 min-w-0">
-              {isGuided && (isListening || tunedCount > 0) && (
+              {(isListening || tunedCount > 0) && (
                 <TuningProgressBar tunedCount={tunedCount} total={notes.length} compact />
               )}
 
-              {isGuided && isListening && !isComplete && guideHint && (
+              {isListening && !isComplete && guideHint && (
                 <p className="text-xs text-brand-700 font-medium text-center mb-1.5 mt-1">
                   {guideHint}
                 </p>
@@ -607,57 +594,32 @@ export function TunerTool({
                 stringStates={stringStates}
                 liveState={liveState}
                 playingStringIndex={playingStringIndex}
+                instrument={instrument}
                 onSelectString={handleSelectString}
                 onPlayReference={handlePlayReference}
               />
 
-              <div className="flex justify-center mt-1.5">
+              <div className="relative flex items-center mt-1.5 min-h-5">
                 <ReferenceLoopToggle enabled={referenceLoop} onChange={setReferenceLoop} />
+                {isListening && (
+                  <p className="absolute left-1/2 -translate-x-1/2 text-[10px] text-gray-400 whitespace-nowrap pointer-events-none">
+                    Pluck the open string
+                  </p>
+                )}
               </div>
 
-              {isListening && (
-                <>
-                  {!isGuided && (
-                    <p className="text-xs text-gray-500 text-center mb-1 mt-1">
-                      Target:{" "}
-                      <span className="font-semibold text-gray-700">{targetLabel}</span>
-                    </p>
-                  )}
-                <div className="mt-2 min-h-[11.5rem] flex flex-col items-center justify-center">
-                  {displayMode === "guided" ? (
-                    <>
-                      <PrecisionMeter
-                        cents={display.displayCents}
-                        detectedNote={display.displayNote}
-                        frequency={display.displayFrequency}
-                        status={display.status}
-                        isListening={isListening}
-                        compact
-                        centered
-                        targetNote={notes[activeString]}
-                      />
-                      <TuneDirectionHint
-                        status={display.status}
-                        hasSignal={display.hasSignal}
-                        variant="inline"
-                      />
-                    </>
-                  ) : (
-                    <StrobeTuner
-                      cents={display.displayCents}
-                      detectedNote={display.displayNote}
-                      frequency={display.displayFrequency}
-                      status={display.status}
-                      isListening={isListening}
-                      targetLabel={targetLabel}
-                      compact
-                    />
-                  )}
-                </div>
-                </>
-              )}
+              <div className="mt-1.5 min-h-[11.5rem] flex flex-col items-center justify-center">
+                {meterPanel}
+                {isListening && (
+                  <TuneDirectionHint
+                    status={display.status}
+                    hasSignal={display.hasSignal}
+                    variant="inline"
+                  />
+                )}
+              </div>
 
-              {isGuided && isComplete && isListening && (
+              {autoAdvance && isComplete && isListening && (
                 <div className="mt-2">
                   <TuningComplete
                     compact
@@ -732,21 +694,21 @@ export function TunerTool({
   return (
     <section id={id} className="py-8">
       <div className="rounded-2xl border border-gray-200 bg-white p-6 md:p-8 shadow-sm">
-        <TunerModeToggle mode={displayMode} onChange={setDisplayMode} />
-
         <TunerOnboarding
           isListening={isListening}
           hasSignal={display.hasSignal}
           status={display.status}
         />
 
-        {displayMode === "pro" && (
-          <p className="mb-6 text-sm text-gray-600">
-            Pick a string on the fretboard — strobe stripes freeze when pitch is locked (±5¢)
-          </p>
-        )}
+        <p className="mb-4 text-sm text-gray-600">
+          Strobe stripes slow down as you approach the target — they freeze when locked (±5¢).
+        </p>
 
-        {isGuided && isComplete && (
+        <div className="mb-4 max-w-xs">
+          <AutoAdvanceToggle enabled={autoAdvance} onChange={setAutoAdvance} />
+        </div>
+
+        {autoAdvance && isComplete && (
           <TuningComplete
             total={notes.length}
             elapsedMs={finalElapsedMs}
@@ -754,9 +716,9 @@ export function TunerTool({
           />
         )}
 
-        {isGuided && <TuningProgressBar tunedCount={tunedCount} total={notes.length} />}
+        <TuningProgressBar tunedCount={tunedCount} total={notes.length} />
 
-        {isGuided && !isComplete && isListening && guideHint && (
+        {!isComplete && isListening && guideHint && (
           <p className="mb-4 text-center text-sm text-brand-700 font-medium">
             {guideHint}
           </p>
@@ -772,8 +734,21 @@ export function TunerTool({
             stringLabelMode={stringLabelMode}
           />
           <div className="flex flex-col items-center gap-3">
-            {defaultMeterPanel}
-            {isListening && displayMode === "guided" && (
+            {isListening ? (
+              <p className="text-[10px] text-gray-400 text-center -mb-1">
+                Pluck the open string
+              </p>
+            ) : null}
+            <StrobeTuner
+              cents={display.displayCents}
+              detectedNote={display.displayNote}
+              frequency={display.displayFrequency}
+              status={display.status}
+              isListening={isListening}
+              targetLabel={targetLabel}
+              targetNote={notes[activeString]}
+            />
+            {isListening && (
               <TuneDirectionHint
                 status={display.status}
                 hasSignal={display.hasSignal}

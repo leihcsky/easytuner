@@ -1,4 +1,13 @@
-/* VirtualGuitar-style layered neck: outer shell + headstock caps + inset fretboard */
+.guitar-fretboard--bass .guitar-nut-texture {
+  background-color: #8f6340;
+  background-image: url("/bass/nut-texture.webp");
+  background-size: cover;
+  background-position: center left;
+}
+
+.guitar-fretboard--bass .guitar-headstock {
+  box-shadow: inset -10px 0 30px rgba(40, 28, 12, 0.35);
+}
 
 .guitar-fretboard {
   --nut-width: 6.75rem;
@@ -319,10 +328,16 @@
   outline-offset: 1px;
 }
 
-.guitar-nut-play--playing {
+.guitar-nut-play--playing,
+.guitar-nut-play--playing:hover,
+.guitar-nut-play--playing:active {
   background: #22c55e;
   color: #fff;
   animation: guitar-nut-pulse 0.9s ease-in-out infinite;
+}
+
+.guitar-nut-play--playing:hover {
+  transform: scale(1.06);
 }
 
 .guitar-nut-note {

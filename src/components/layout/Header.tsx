@@ -12,11 +12,16 @@ const navItems = [
 export function Header() {
   return (
     <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-        <Link href="/" aria-label="EasyTuner home">
+      <div className="mx-auto flex max-w-6xl items-center px-4 py-4 w-full">
+        <Link href="/" className="shrink-0" aria-label="EasyTuner home">
           <Logo />
         </Link>
-        <nav className="hidden sm:flex items-center gap-6">
+        <div
+          className="hidden sm:block shrink-0 w-[clamp(2rem,5vw,6rem)]"
+          aria-hidden="true"
+        />
+        <div className="hidden sm:block flex-1 min-w-0" aria-hidden="true" />
+        <nav className="hidden sm:flex items-center gap-5 lg:gap-6 shrink-0">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -27,7 +32,7 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <nav className="flex sm:hidden items-center gap-4">
+        <nav className="flex sm:hidden items-center gap-3 ml-auto shrink-0">
           {navItems.slice(0, 3).map((item) => (
             <Link
               key={item.href}

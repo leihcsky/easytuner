@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { TunerPageContent } from "@/components/tuner/TunerPage";
+import { HomePageContent } from "@/components/home/HomePageContent";
 import { JsonLd, buildFaqSchema, buildWebAppSchema } from "@/components/seo/JsonLd";
 import {
   getGuitarTuning,
@@ -56,12 +56,11 @@ export default async function GuitarTuningPage({ params }: PageProps) {
       />
       <JsonLd data={buildFaqSchema(tuning.faq)} />
 
-      <TunerPageContent
+      <HomePageContent
         tuning={tuning}
         allTunings={guitar}
+        faq={tuning.faq}
         heroTitle={tuning.title}
-        heroSubtitle={`Tune your guitar to ${tuning.name} (${tuning.notes.map((n) => n.replace(/\d+/, "")).join(" ")}) using your microphone`}
-        chartTitle={`${tuning.name} Tuning Chart`}
       />
     </>
   );

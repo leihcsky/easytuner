@@ -10,6 +10,7 @@ interface GuitarFretboardProps {
   stringStates: StringTuneState[];
   liveState?: StringTuneState;
   playingStringIndex?: number | null;
+  instrument?: string;
   onSelectString: (index: number) => void;
   onPlayReference?: (index: number) => void;
 }
@@ -42,15 +43,21 @@ export function GuitarFretboard({
   stringStates,
   liveState,
   playingStringIndex = null,
+  instrument = "guitar",
   onSelectString,
   onPlayReference,
 }: GuitarFretboardProps) {
   const visualOrder = notes.map((_, i) => notes.length - 1 - i);
+  const boardLabel = instrument === "bass" ? "Bass fretboard" : "Guitar fretboard";
 
   return (
-    <div className="guitar-fretboard relative w-full select-none">
+    <div
+      className={`guitar-fretboard relative w-full select-none${
+        instrument === "bass" ? " guitar-fretboard--bass" : ""
+      }`}
+    >
       <div className="guitar-neck-frame">
-        <div className="guitar-fretboard-inner" role="img" aria-label="Guitar fretboard">
+        <div className="guitar-fretboard-inner" role="img" aria-label={boardLabel}>
           <div className="guitar-headstock" aria-hidden>
             <div className="guitar-nut-texture" />
             <div className="guitar-nut-edge" />

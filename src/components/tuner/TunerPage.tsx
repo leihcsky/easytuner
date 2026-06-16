@@ -45,7 +45,11 @@ export function TunerPageContent({
       )}
 
       <div ref={tunerRef}>
-        <TunerTool notes={tuning.notes} />
+        <TunerTool
+          notes={tuning.notes}
+          instrument={tuning.instrument}
+          tuningSlug={tuning.slug}
+        />
       </div>
 
       <TuningChart
