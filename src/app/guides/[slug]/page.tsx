@@ -4,6 +4,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getGuide, getGuideSlugs, SITE_URL } from "@/lib/tunings";
 import { guideContent } from "@/data/guide-content";
+import { getGuideCta } from "@/data/guide-cta";
+import { GuideCta } from "@/components/guides/GuideCta";
+import { GuideRelatedGuides } from "@/components/guides/GuideRelatedGuides";
+import { GuideInlineText } from "@/components/guides/GuideInlineText";
 import { JsonLd, buildArticleSchema } from "@/components/seo/JsonLd";
 
 interface PageProps {
@@ -47,6 +51,7 @@ export default async function GuidePage({ params }: PageProps) {
 
   const url = `${SITE_URL}/guides/${slug}`;
   const articleTitle = guide.absolute ?? guide.title;
+  const cta = getGuideCta(slug);
 
   return (
     <article className="py-12">
@@ -78,7 +83,7 @@ export default async function GuidePage({ params }: PageProps) {
             )}
             {section.paragraphs.map((paragraph, pIndex) => (
               <p key={pIndex} className="text-gray-600 leading-relaxed mb-4">
-                {paragraph}
+                <GuideInlineText text={paragraph} />
               </p>
             ))}
             {section.image && (
@@ -101,7 +106,9 @@ export default async function GuidePage({ params }: PageProps) {
             {section.bullets && section.bullets.length > 0 && (
               <ul className="list-disc pl-6 space-y-2 text-gray-600 leading-relaxed mb-4">
                 {section.bullets.map((item, bIndex) => (
-                  <li key={bIndex}>{item}</li>
+                  <li key={bIndex}>
+                    <GuideInlineText text={item} />
+                  </li>
                 ))}
               </ul>
             )}
@@ -109,19 +116,8 @@ export default async function GuidePage({ params }: PageProps) {
         ))}
       </div>
 
-      <div className="mt-12 p-6 rounded-xl bg-brand-50 border border-brand-200">
-        <p className="font-semibold text-gray-900 mb-2">Ready to tune your guitar?</p>
-        <p className="text-gray-600 mb-4">
-          Open EasyTuner&apos;s free online guitar tuner — reference tones, strobe dial,
-          and auto-advance are ready when you are.
-        </p>
-        <Link
-          href="/"
-          className="inline-flex px-6 py-2 rounded-full bg-brand-600 text-white font-medium hover:bg-brand-700 transition-colors"
-        >
-          Open Guitar Tuner
-        </Link>
-      </div>
+      <GuideRelatedGuides slug={slug} />
+      <GuideCta cta={cta} />
     </article>
   );
 }

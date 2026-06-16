@@ -45,7 +45,7 @@ export const GUITAR_TUNING_PAGE_COPY: Record<string, GuitarTuningPageCopy> = {
       title: "Why Guitarists Use Drop D",
       paragraphs: [
         "The low D string adds weight to riffs and lets you barre the bottom three strings (D-A-D) with one finger for power chords. It is faster to switch from standard than full down-tuning setups, which is why Drop D is a staple for practice, recording, and live rock sets.",
-        "Drop D is not the same as Drop C or DADGAD — each tuning changes different strings for a different sound. Use the tuning selector above to compare reference pitches before you commit to a setup.",
+        "Drop D is not the same as Drop C or DADGAD — each tuning changes different strings for a different sound. Use the tuning selector above to compare reference pitches before you commit to a setup. Wondering how Drop D compares to standard EADGBE? Read [Drop D vs Standard Tuning](/guides/drop-d-vs-standard) for sound, genres, and when to use each.",
       ],
     },
   },

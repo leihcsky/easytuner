@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { guitar } from "@/lib/tunings";
+import { guitar, guides } from "@/lib/tunings";
 
 export function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-gray-50 mt-16">
       <div className="mx-auto max-w-5xl px-4 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <p className="font-semibold text-gray-900 mb-3">EasyTuner</p>
             <p className="text-sm text-gray-600">
@@ -49,6 +49,26 @@ export function Footer() {
                   Ukulele Tuner
                 </Link>
               </li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-semibold text-gray-900 mb-3">Guides</p>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/guides" className="text-sm text-gray-600 hover:text-brand-600">
+                  All Guides
+                </Link>
+              </li>
+              {guides.map((guide) => (
+                <li key={guide.slug}>
+                  <Link
+                    href={`/guides/${guide.slug}`}
+                    className="text-sm text-gray-600 hover:text-brand-600"
+                  >
+                    {guide.title}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

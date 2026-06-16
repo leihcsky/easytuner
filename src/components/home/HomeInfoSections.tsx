@@ -93,6 +93,17 @@ export function TuningQualitySection() {
           strings are done so you never lose your place mid-session.
         </p>
         <p>
+          Each open string in standard tuning vibrates at a specific frequency in
+          Hertz — for example low E near 82 Hz and high E near 330 Hz. See our{" "}
+          <Link
+            href="/guides/guitar-string-frequencies"
+            className="text-brand-600 font-medium hover:text-brand-700"
+          >
+            guitar string frequencies chart
+          </Link>{" "}
+          for the full EADGBE Hz reference and how cents relate to pitch.
+        </p>
+        <p>
           After tuning, strum a few chords to double-check. If something still
           sounds off, revisit that string rather than resetting every peg from
           scratch.

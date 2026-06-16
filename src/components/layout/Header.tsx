@@ -31,8 +31,8 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <nav className="flex sm:hidden items-center gap-3 ml-auto shrink-0">
-          {navItems.slice(0, 3).map((item) => (
+        <nav className="flex sm:hidden items-center gap-2 ml-auto shrink-0">
+          {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}

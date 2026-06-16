@@ -16,19 +16,43 @@
   {
     "slug": "guitar-string-frequencies",
     "title": "Guitar String Frequencies",
-    "description": "Complete reference chart of standard guitar string frequencies in Hz for all six strings.",
-    "keywords": ["guitar tuning frequencies", "guitar string frequencies", "guitar hz chart"]
+    "absolute": "Guitar String Frequencies (Hz) — Standard EADGBE Chart",
+    "description": "Reference chart of standard guitar string frequencies in Hz (E2–E4), how A4 = 440 Hz works, cents vs Hertz, and what EasyTuner's strobe dial is measuring.",
+    "keywords": [
+      "guitar string frequencies",
+      "guitar tuning frequencies",
+      "guitar hz chart",
+      "standard guitar tuning hz",
+      "eadgbe frequencies",
+      "guitar string frequency chart"
+    ]
   },
   {
     "slug": "standard-guitar-tuning",
     "title": "Standard Guitar Tuning",
-    "description": "Everything you need to know about standard EADGBE guitar tuning, including history and common uses.",
-    "keywords": ["standard guitar tuning", "eadgbe tuning", "guitar standard tuning guide"]
+    "absolute": "Standard Guitar Tuning (EADGBE) — Notes, Intervals & Uses",
+    "description": "What standard EADGBE guitar tuning means: string notes E2–E4, perfect fourths and the G–B major third, why it became the default, and which styles assume it.",
+    "keywords": [
+      "standard guitar tuning",
+      "eadgbe tuning",
+      "what is eadgbe",
+      "guitar standard tuning explained",
+      "eadgbe notes",
+      "guitar tuning intervals"
+    ]
   },
   {
     "slug": "drop-d-vs-standard",
     "title": "Drop D vs Standard Tuning",
-    "description": "Compare Drop D and standard guitar tuning to find which is right for your playing style and genre.",
-    "keywords": ["drop d vs standard", "drop d tuning comparison", "drop d or standard"]
+    "absolute": "Drop D vs Standard Tuning — Which Should You Use?",
+    "description": "Compare Drop D (DADGBE) and standard EADGBE guitar tuning: sound, genres, power chords, switching tips, and when to use EasyTuner's Drop D tuner.",
+    "keywords": [
+      "drop d vs standard",
+      "drop d vs standard tuning",
+      "drop d or standard",
+      "dadgbe vs eadgbe",
+      "drop d tuning comparison",
+      "when to use drop d"
+    ]
   }
 ]
