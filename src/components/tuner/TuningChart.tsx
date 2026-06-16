@@ -45,8 +45,8 @@ export function TuningChart({
                 <td className="px-6 py-4 text-sm text-gray-600">
                   {stringCount - index}
                 </td>
-                <td className="px-6 py-4 text-sm font-semibold text-gray-900">
-                  {getNoteDisplay(note)}
+                <td className="px-6 py-4 text-sm font-semibold text-gray-900 font-mono tracking-tight">
+                  {note}
                 </td>
                 {showFrequencies && (
                   <td className="px-6 py-4 text-sm text-gray-600">

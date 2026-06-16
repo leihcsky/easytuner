@@ -26,13 +26,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const url = `${SITE_URL}/guitar-tunings/${slug}`;
 
+  const metaTitle =
+    slug === "standard"
+      ? tuning.title
+      : `${tuning.title} - Free Online Tuner & Chart`;
+
   return {
-    title: tuning.title,
+    title: metaTitle,
     description: tuning.description,
     keywords: tuning.keywords,
     alternates: { canonical: url },
     openGraph: {
-      title: tuning.title,
+      title: metaTitle,
       description: tuning.description,
       url,
     },
@@ -52,7 +57,7 @@ export default async function GuitarTuningPage({ params }: PageProps) {
   return (
     <>
       <JsonLd
-        data={buildWebAppSchema(tuning.title, tuning.description, url)}
+        data={buildWebAppSchema(`${tuning.title} - Online Tuner`, tuning.description, url)}
       />
       <JsonLd data={buildFaqSchema(tuning.faq)} />
 
@@ -60,7 +65,6 @@ export default async function GuitarTuningPage({ params }: PageProps) {
         tuning={tuning}
         allTunings={guitar}
         faq={tuning.faq}
-        heroTitle={tuning.title}
       />
     </>
   );

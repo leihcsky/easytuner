@@ -5,7 +5,6 @@ const navItems = [
   { href: "/", label: "Guitar" },
   { href: "/bass-tuner", label: "Bass" },
   { href: "/ukulele-tuner", label: "Ukulele" },
-  { href: "/violin-tuner", label: "Violin" },
   { href: "/guides", label: "Guides" },
 ];
 

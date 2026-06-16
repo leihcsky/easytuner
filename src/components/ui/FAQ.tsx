@@ -7,24 +7,20 @@ interface FAQProps {
 
 export function FAQ({ items, title = "Frequently Asked Questions" }: FAQProps) {
   return (
-    <section className="py-12">
-      <h2 className="text-2xl font-bold text-gray-900 mb-8">{title}</h2>
-      <div className="space-y-4">
+    <section className="py-12" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" className="text-2xl font-bold text-gray-900 mb-6">
+        {title}
+      </h2>
+      <div className="rounded-2xl border border-gray-200 bg-white shadow-sm divide-y divide-gray-100">
         {items.map((item, index) => (
-          <details
-            key={index}
-            className="group rounded-xl border border-gray-200 bg-white overflow-hidden"
-          >
-            <summary className="flex cursor-pointer items-center justify-between px-6 py-4 font-medium text-gray-900 hover:bg-gray-50">
+          <article key={index} className="px-5 py-5 sm:px-6 sm:py-6">
+            <h3 className="text-base font-semibold text-gray-900 leading-snug pr-2">
               {item.question}
-              <span className="ml-4 text-gray-400 group-open:rotate-180 transition-transform">
-                ▼
-              </span>
-            </summary>
-            <div className="px-6 pb-4 text-gray-600 leading-relaxed">
+            </h3>
+            <p className="mt-2.5 text-sm sm:text-[0.9375rem] text-gray-600 leading-relaxed">
               {item.answer}
-            </div>
-          </details>
+            </p>
+          </article>
         ))}
       </div>
     </section>

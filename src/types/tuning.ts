@@ -19,6 +19,7 @@ export interface Guide {
   title: string;
   description: string;
   keywords: string[];
+  absolute?: string;
 }
 
 export type TuningStatus = "flat" | "in-tune" | "sharp";

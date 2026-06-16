@@ -26,9 +26,9 @@
     "instrument": "guitar",
     "slug": "drop-d",
     "name": "Drop D",
-    "title": "Drop D Guitar Tuner",
-    "description": "Free online Drop D guitar tuner. Tune your guitar to D-A-D-G-B-E instantly using your microphone.",
-    "keywords": ["drop d tuner", "drop d guitar tuner", "online drop d tuner"],
+    "title": "Drop D Guitar Tuning",
+    "description": "Drop D guitar tuning (D-A-D-G-B-E) — lower the 6th string from standard. Free online tuner with reference tones and microphone detection.",
+    "keywords": ["drop d guitar tuning", "drop d tuning", "dadgbe drop d", "how to tune drop d", "drop d tuning chart"],
     "notes": ["D2", "A2", "D3", "G3", "B3", "E4"],
     "faq": [
       {
@@ -42,6 +42,10 @@
       {
         "question": "Why use Drop D tuning?",
         "answer": "Drop D allows you to play power chords with one finger on the lowest three strings and provides a heavier, deeper sound for rock and metal genres."
+      },
+      {
+        "question": "What songs use Drop D tuning?",
+        "answer": "Drop D appears in Everlong by Foo Fighters, Moby Dick by Led Zeppelin, Dear Prudence by The Beatles, and countless metal and rock tracks. The low D string makes one-finger power chords on the bottom three strings possible."
       }
     ]
   },
@@ -49,9 +53,9 @@
     "instrument": "guitar",
     "slug": "drop-c",
     "name": "Drop C",
-    "title": "Drop C Guitar Tuner",
-    "description": "Free online Drop C guitar tuner. Tune your guitar to C-G-C-F-A-D for heavy metal and hard rock.",
-    "keywords": ["drop c tuner", "drop c guitar tuner", "online drop c tuner"],
+    "title": "Drop C Guitar Tuning",
+    "description": "Drop C guitar tuning (C-G-C-F-A-D) for metal and hard rock. Free online tuner with per-string reference tones and microphone pitch detection.",
+    "keywords": ["drop c guitar tuning", "drop c tuning", "cgcfad tuning", "how to tune drop c", "drop c tuning chart"],
     "notes": ["C2", "G2", "C3", "F3", "A3", "D4"],
     "faq": [
       {
@@ -72,9 +76,9 @@
     "instrument": "guitar",
     "slug": "open-g",
     "name": "Open G",
-    "title": "Open G Guitar Tuner",
-    "description": "Free online Open G guitar tuner. Tune your guitar to D-G-D-G-B-D for slide guitar and blues.",
-    "keywords": ["open g tuner", "open g guitar tuner", "online open g tuner"],
+    "title": "Open G Guitar Tuning",
+    "description": "Open G guitar tuning (D-G-D-G-B-D) for slide and blues. Strum a G chord open — tune online with reference tones or your microphone.",
+    "keywords": ["open g guitar tuning", "open g tuning", "dgdgbd tuning", "how to tune open g", "keith richards tuning"],
     "notes": ["D2", "G2", "D3", "G3", "B3", "D4"],
     "faq": [
       {
@@ -95,9 +99,9 @@
     "instrument": "guitar",
     "slug": "dadgad",
     "name": "DADGAD",
-    "title": "DADGAD Guitar Tuner",
-    "description": "Free online DADGAD guitar tuner. Tune your guitar to D-A-D-G-A-D for Celtic and folk music.",
-    "keywords": ["dadgad tuner", "dadgad guitar tuner", "online dadgad tuner"],
+    "title": "DADGAD Guitar Tuning",
+    "description": "DADGAD guitar tuning (D-A-D-G-A-D) for Celtic and fingerstyle. Not Double Drop D — tune each string with our free online tuner.",
+    "keywords": ["dadgad guitar tuning", "dadgad tuning", "celtic guitar tuning", "how to tune dadgad", "dad gad tuning"],
     "notes": ["D2", "A2", "D3", "G3", "A3", "D4"],
     "faq": [
       {

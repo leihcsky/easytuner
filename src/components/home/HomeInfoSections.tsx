@@ -8,20 +8,60 @@ export function HowToTuneSection() {
       </h2>
       <div className="space-y-4 text-gray-600 leading-relaxed">
         <p>
-          This online guitar tuner is built around a visual fretboard. Tap the
-          speaker icon beside any string to hear its target pitch, then press{" "}
-          <strong className="font-medium text-gray-800">Tap to tune</strong> and
-          allow microphone access. Pluck the highlighted open string — the strobe
-          dial shows whether you are sharp or flat, and on-screen hints tell you
-          to tune up or tune down until a checkmark appears on that string.
+          EasyTuner gives you two ways to tune: <strong className="font-medium text-gray-800">by ear</strong>{" "}
+          using built-in reference tones, or <strong className="font-medium text-gray-800">by microphone</strong>{" "}
+          with real-time pitch feedback on the strobe dial. Many players use both — hear
+          the target note first, then fine-tune with the mic until the string locks in.
+        </p>
+
+        <h3 className="text-lg font-semibold text-gray-900 pt-1">
+          Reference tones — tune by ear
+        </h3>
+        <p>
+          Tap the <strong className="font-medium text-gray-800">🔊 speaker icon</strong>{" "}
+          beside any string on the fretboard to play that string&apos;s target pitch
+          (for example low E or A). Listen carefully, then pluck the same open string
+          on your guitar and turn the tuning peg until both pitches match — when they
+          are in tune, the two notes blend together with no wobbling &ldquo;beat&rdquo;
+          between them.
         </p>
         <p>
-          With <strong className="font-medium text-gray-800">auto-advance</strong>{" "}
-          enabled (default), the tuner walks you through each string in order, from
-          lowest to highest. Turn it off in the sidebar if you prefer to pick strings
-          yourself. For best results, tune in a quiet room, pluck firmly, and give
-          new strings a second pass after they stretch.
+          Turn on <strong className="font-medium text-gray-800">Loop</strong> below the
+          fretboard to hold the reference tone while you adjust the peg, which makes
+          ear-tuning much easier. Reference tones are also useful if you are learning
+          standard tuning for the first time and want to memorise what each string
+          should sound like before using the microphone.
         </p>
+
+        <h3 className="text-lg font-semibold text-gray-900 pt-1">
+          Strobe dial — tune with your microphone
+        </h3>
+        <p>
+          Press <strong className="font-medium text-gray-800">Tap to tune</strong>, allow
+          microphone access, and pluck the highlighted open string. The{" "}
+          <strong className="font-medium text-gray-800">strobe dial</strong> shows your
+          pitch in real time: rotating stripes mean you are still out of tune, they slow
+          down as you get closer to the target, and they settle when you are within a
+          few cents of the correct note. The display also shows how many{" "}
+          <strong className="font-medium text-gray-800">cents</strong> sharp or flat you
+          are (1 cent = 1/100 of a semitone), plus plain-language{" "}
+          <strong className="font-medium text-gray-800">Tune up</strong> or{" "}
+          <strong className="font-medium text-gray-800">Tune down</strong> hints so you
+          know which way to turn the peg. A ✓ appears on the fretboard when that string
+          is locked in.
+        </p>
+
+        <h3 className="text-lg font-semibold text-gray-900 pt-1">
+          Work through all six strings
+        </h3>
+        <p>
+          With <strong className="font-medium text-gray-800">auto-advance</strong> enabled
+          (default), the tuner moves to the next string after each one is tuned, from
+          lowest to highest. Turn it off in the sidebar if you prefer to jump between
+          strings yourself. For best results, tune in a quiet room, pluck firmly near
+          the 12th fret, and give new strings a second pass once they have stretched.
+        </p>
+
         <Link
           href="/guides/how-to-tune-a-guitar"
           className="inline-flex text-brand-600 font-medium hover:text-brand-700"

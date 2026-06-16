@@ -6,26 +6,26 @@ import { TunerTool } from "@/components/tuner/TunerTool";
 import { TuningChart } from "@/components/tuner/TuningChart";
 import { FAQ } from "@/components/ui/FAQ";
 import {
-  WhatIsStandardBassTuningSection,
-  HowToTuneBassSection,
-  BassVsGuitarTuningSection,
-  BassTuningFrequencySection,
-} from "@/components/bass/BassInfoSections";
+  WhatIsStandardUkuleleTuningSection,
+  HowToTuneUkuleleSection,
+  UkuleleVsGuitarTuningSection,
+  UkuleleTuningFrequencySection,
+} from "@/components/ukulele/UkuleleInfoSections";
 import type { Tuning, FAQItem } from "@/types/tuning";
 
-interface BassPageContentProps {
+interface UkulelePageContentProps {
   tuning: Tuning;
   faq: FAQItem[];
   heroTitle?: string;
   heroSubtitle?: string;
 }
 
-export function BassPageContent({
+export function UkulelePageContent({
   tuning,
   faq,
-  heroTitle = "Online Bass Tuner",
-  heroSubtitle = "Standard 4-string bass tuning (E-A-D-G) — tap 🔊 for low-frequency reference tones or use Tap to tune with microphone detection tuned for bass fundamentals.",
-}: BassPageContentProps) {
+  heroTitle = "Online Ukulele Tuner",
+  heroSubtitle = "Standard ukulele tuning G-C-E-A with re-entrant high G — tap 🔊 for reference tones or use Tap to tune with microphone detection on a four-string fretboard.",
+}: UkulelePageContentProps) {
   return (
     <>
       <CompactHero title={heroTitle} subtitle={heroSubtitle} />
@@ -41,23 +41,23 @@ export function BassPageContent({
 
       <TuningChart
         notes={tuning.notes}
-        title="Standard Bass Tuning Chart (E-A-D-G)"
+        title="Standard Ukulele Tuning Chart (GCEA)"
         showNoteBadges={false}
-        intro="Standard bass tuning uses E1, A1, D2, and G2 from the 4th string to the 1st. Frequencies are one octave below a guitar's lowest four strings — use this chart with the bass fretboard above."
+        intro="Standard ukulele tuning uses G4, C4, E4, and A4 from the 4th string to the 1st. The 4th-string G is higher than the 3rd-string C (re-entrant tuning). Use this chart with the ukulele fretboard above."
       />
 
-      <WhatIsStandardBassTuningSection />
-      <HowToTuneBassSection />
-      <BassVsGuitarTuningSection />
-      <BassTuningFrequencySection />
+      <WhatIsStandardUkuleleTuningSection />
+      <HowToTuneUkuleleSection />
+      <UkuleleVsGuitarTuningSection />
+      <UkuleleTuningFrequencySection />
 
-      <FAQ items={faq} title="Online Bass Tuner FAQ" />
+      <FAQ items={faq} title="Online Ukulele Tuner FAQ" />
 
       <section className="py-12">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">More Instrument Tuners</h2>
         <p className="text-gray-600 mb-6 max-w-3xl">
-          EasyTuner also covers guitar and ukulele — same fretboard layout, reference
-          tones, and microphone detection on every page.
+          EasyTuner also covers guitar and bass — each page is built for that
+          instrument&apos;s string count, pitches, and tuning layout.
         </p>
         <div className="grid grid-cols-2 gap-4">
           <Link
@@ -68,11 +68,11 @@ export function BassPageContent({
             <p className="mt-1 text-xs text-gray-500">Standard &amp; alternate tunings</p>
           </Link>
           <Link
-            href="/ukulele-tuner"
+            href="/bass-tuner"
             className="rounded-xl border border-gray-200 bg-white px-4 py-6 text-center hover:border-brand-300 hover:shadow-md transition-all"
           >
-            <span className="font-semibold text-gray-900">Ukulele Tuner</span>
-            <p className="mt-1 text-xs text-gray-500">GCEA standard tuning</p>
+            <span className="font-semibold text-gray-900">Bass Tuner</span>
+            <p className="mt-1 text-xs text-gray-500">E-A-D-G standard tuning</p>
           </Link>
         </div>
       </section>

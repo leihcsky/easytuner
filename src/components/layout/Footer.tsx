@@ -9,7 +9,7 @@ export function Footer() {
           <div>
             <p className="font-semibold text-gray-900 mb-3">EasyTuner</p>
             <p className="text-sm text-gray-600">
-              Free online instrument tuners. Tune your guitar, bass, ukulele, and violin instantly.
+              Free online instrument tuners. Tune your guitar, bass, and ukulele instantly.
             </p>
           </div>
           <div>
@@ -47,11 +47,6 @@ export function Footer() {
               <li>
                 <Link href="/ukulele-tuner" className="text-sm text-gray-600 hover:text-brand-600">
                   Ukulele Tuner
-                </Link>
-              </li>
-              <li>
-                <Link href="/violin-tuner" className="text-sm text-gray-600 hover:text-brand-600">
-                  Violin Tuner
                 </Link>
               </li>
             </ul>

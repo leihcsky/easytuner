@@ -6,11 +6,13 @@ import { TunerTool } from "@/components/tuner/TunerTool";
 import { TuningSelectorCompact } from "@/components/tuner/TuningSelectorCompact";
 import { TuningChart } from "@/components/tuner/TuningChart";
 import { FAQ } from "@/components/ui/FAQ";
+import { AlternateTuningSections } from "@/components/home/AlternateTuningSections";
 import {
   HowToTuneSection,
   TuningQualitySection,
   TuningFrequencySection,
 } from "@/components/home/HomeInfoSections";
+import { getGuitarTuningPageCopy } from "@/data/guitar-tuning-page-content";
 import type { Tuning, FAQItem } from "@/types/tuning";
 
 const POPULAR_TUNING_DESCRIPTIONS: Record<string, string> = {
@@ -35,6 +37,11 @@ function tuningHref(slug: string): string {
   return slug === "standard" ? "/" : `/guitar-tunings/${slug}`;
 }
 
+function tuningLinkLabel(tuning: Tuning): string {
+  if (tuning.slug === "standard") return "Standard Tuning";
+  return `${tuning.name} Tuning`;
+}
+
 function defaultChartIntro(tuning: Tuning): string {
   const sequence = formatNoteSequence(tuning.notes);
   if (tuning.slug === "standard") {
@@ -48,7 +55,7 @@ function defaultHeroSubtitle(tuning: Tuning): string {
     return DEFAULT_HERO.subtitle;
   }
   const sequence = formatNoteSequence(tuning.notes);
-  return `Free browser-based ${tuning.name} guitar tuner (${sequence}) — tap 🔊 on the fretboard for reference tones, or use Tap to tune for live microphone detection.`;
+  return `Free online ${tuning.name} guitar tuning (${sequence}) — tap 🔊 for reference tones or use Tap to tune with microphone detection.`;
 }
 
 export interface HomePageContentProps {
@@ -67,31 +74,38 @@ export function HomePageContent({
   tuning,
   allTunings,
   faq,
-  heroTitle = DEFAULT_HERO.title,
+  heroTitle,
   heroSubtitle,
   chartTitle,
   chartIntro,
   faqTitle,
   showPopularTunings = true,
 }: HomePageContentProps) {
-  const resolvedSubtitle = heroSubtitle ?? defaultHeroSubtitle(tuning);
+  const isStandard = tuning.slug === "standard";
+  const pageCopy = !isStandard ? getGuitarTuningPageCopy(tuning.slug) : undefined;
+
+  const resolvedHeroTitle =
+    heroTitle ?? (isStandard ? DEFAULT_HERO.title : tuning.title);
+  const resolvedSubtitle =
+    heroSubtitle ?? pageCopy?.heroSubtitle ?? defaultHeroSubtitle(tuning);
   const resolvedChartTitle =
     chartTitle ??
-    (tuning.slug === "standard"
+    pageCopy?.chartTitle ??
+    (isStandard
       ? "Standard Guitar Tuning Chart (EADGBE)"
-      : `${tuning.name} Tuning Chart`);
-  const resolvedChartIntro = chartIntro ?? defaultChartIntro(tuning);
+      : `${tuning.name} Guitar Tuning Chart`);
+  const resolvedChartIntro =
+    chartIntro ?? pageCopy?.chartIntro ?? defaultChartIntro(tuning);
   const resolvedFaqTitle =
     faqTitle ??
-    (tuning.slug === "standard"
-      ? "Online Guitar Tuner FAQ"
-      : `${tuning.name} Guitar Tuner FAQ`);
+    pageCopy?.faqTitle ??
+    (isStandard ? "Online Guitar Tuner FAQ" : `${tuning.name} Guitar Tuning FAQ`);
 
   const relatedTunings = allTunings.filter((t) => t.slug !== tuning.slug);
 
   return (
     <>
-      <CompactHero title={heroTitle} subtitle={resolvedSubtitle} />
+      <CompactHero title={resolvedHeroTitle} subtitle={resolvedSubtitle} />
 
       <TunerTool
         notes={tuning.notes}
@@ -111,9 +125,19 @@ export function HomePageContent({
         intro={resolvedChartIntro}
       />
 
-      <HowToTuneSection />
-      <TuningQualitySection />
-      <TuningFrequencySection />
+      {isStandard ? (
+        <>
+          <HowToTuneSection />
+          <TuningQualitySection />
+          <TuningFrequencySection />
+        </>
+      ) : pageCopy ? (
+        <AlternateTuningSections
+          whatIs={pageCopy.whatIs}
+          howToTune={pageCopy.howToTune}
+          whyUse={pageCopy.whyUse}
+        />
+      ) : null}
 
       <FAQ items={faq} title={resolvedFaqTitle} />
 
@@ -121,9 +145,9 @@ export function HomePageContent({
         <section className="py-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">More Guitar Tunings</h2>
           <p className="text-gray-600 mb-6 max-w-3xl">
-            {tuning.slug === "standard"
-              ? "Beyond standard EADGBE, use our online guitar tuner for drop tunings, open chords, and folk setups — each page includes the same fretboard, reference tones, and microphone detection."
-              : "Switch tunings anytime — each page includes the same fretboard, reference tones, and microphone detection."}
+            {isStandard
+              ? "Beyond standard EADGBE, explore drop tunings, open chords, and folk setups — each page explains that tuning and includes a dedicated online tuner."
+              : "Compare alternate tunings side by side — each page explains what makes that tuning different and loads the correct string targets in the tuner above."}
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {relatedTunings.map((t) => (
@@ -132,9 +156,7 @@ export function HomePageContent({
                 href={tuningHref(t.slug)}
                 className="rounded-xl border border-gray-200 bg-white px-4 py-6 text-center hover:border-brand-300 hover:shadow-md transition-all"
               >
-                <span className="font-semibold text-gray-900">
-                  {t.slug === "standard" ? "Standard Tuner" : `${t.name} Tuner`}
-                </span>
+                <span className="font-semibold text-gray-900">{tuningLinkLabel(t)}</span>
                 <p className="mt-1 text-xs text-gray-500">
                   {POPULAR_TUNING_DESCRIPTIONS[t.slug] ?? "Alternative tuning"}
                 </p>

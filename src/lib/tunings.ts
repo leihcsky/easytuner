@@ -36,5 +36,5 @@ export function getRelatedGuitarTunings(currentSlug: string): Tuning[] {
   return guitar.filter((t) => t.slug !== currentSlug);
 }
 
-export const SITE_URL = "https://easytuner.com";
+export const SITE_URL = "https://easytuner.org";
 export const SITE_NAME = "EasyTuner";

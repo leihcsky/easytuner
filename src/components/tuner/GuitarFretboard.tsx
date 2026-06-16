@@ -48,14 +48,22 @@ export function GuitarFretboard({
   onPlayReference,
 }: GuitarFretboardProps) {
   const visualOrder = notes.map((_, i) => notes.length - 1 - i);
-  const boardLabel = instrument === "bass" ? "Bass fretboard" : "Guitar fretboard";
+  const boardLabel =
+    instrument === "bass"
+      ? "Bass fretboard"
+      : instrument === "ukulele"
+        ? "Ukulele fretboard"
+        : "Guitar fretboard";
+
+  const instrumentClass =
+    instrument === "bass"
+      ? " guitar-fretboard--bass"
+      : instrument === "ukulele"
+        ? " guitar-fretboard--ukulele"
+        : "";
 
   return (
-    <div
-      className={`guitar-fretboard relative w-full select-none${
-        instrument === "bass" ? " guitar-fretboard--bass" : ""
-      }`}
-    >
+    <div className={`guitar-fretboard relative w-full select-none${instrumentClass}`}>
       <div className="guitar-neck-frame">
         <div className="guitar-fretboard-inner" role="img" aria-label={boardLabel}>
           <div className="guitar-headstock" aria-hidden>

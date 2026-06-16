@@ -1,3 +1,121 @@
+/* ── Ukulele fretboard overrides (narrow nut, nylon-string look, bright fretboard) ── */
+.guitar-fretboard--ukulele {
+  --nut-width: 5rem;
+  --cap-width: 2.75rem;
+  --cap-height: 1rem;
+  --cap-offset-y: -0.85rem;
+  --cap-inset-right: 0.6rem;
+  --fretboard-bg: #4a3728;
+  --fret-color: #a0a0a0;
+  --vg-string-scale: 0.8;
+}
+
+@media (min-width: 768px) {
+  .guitar-fretboard--ukulele {
+    --nut-width: 5.75rem;
+    --cap-width: 3rem;
+    --vg-string-scale: 0.9;
+  }
+}
+
+/* Uke headstock — lighter tropical wood feel */
+.guitar-fretboard--ukulele .guitar-nut-texture {
+  background-color: #c8a96e;
+  background-image: url("/ukulele/nut-texture.webp");
+  background-size: cover;
+  background-position: center left;
+}
+
+.guitar-fretboard--ukulele .guitar-headstock {
+  box-shadow: inset -8px 0 24px rgba(80, 50, 20, 0.28);
+}
+
+/* Uke tuning peg caps — smaller to match narrower headstock */
+.guitar-fretboard--ukulele .guitar-headstock::before,
+.guitar-fretboard--ukulele .guitar-headstock::after {
+  width: var(--cap-width);
+  height: var(--cap-height);
+  right: var(--cap-inset-right);
+}
+
+/* Uke fretboard — warm dark rosewood feel */
+.guitar-fretboard--ukulele .guitar-fretboard-surface {
+  background-color: var(--fretboard-bg);
+  background-image:
+    url("/ukulele/fretboard-texture.webp"),
+    linear-gradient(
+      180deg,
+      #5a4030 0%,
+      var(--fretboard-bg) 45%,
+      #38291c 100%
+    );
+  background-size: cover;
+  background-position: center;
+}
+
+/* 4 strings centred with uke-appropriate gaps */
+.guitar-fretboard--ukulele .guitar-strings-layer {
+  justify-content: center;
+  gap: 0.9rem;
+}
+
+@media (min-width: 768px) {
+  .guitar-fretboard--ukulele .guitar-strings-layer {
+    gap: 1.1rem;
+  }
+}
+
+.guitar-fretboard--ukulele .guitar-string-row {
+  flex: 0 0 auto;
+  min-height: 1.25rem;
+}
+
+/* Nylon strings — thinner than guitar, similar gauge (re-entrant: 4th string not heaviest) */
+.guitar-fretboard--ukulele .guitar-string {
+  height: calc(2px * var(--vg-string-scale));
+  border-radius: 1px;
+}
+
+.guitar-fretboard--ukulele .guitar-strings-layer > .guitar-string-row:nth-child(2) .guitar-string {
+  height: calc(2.5px * var(--vg-string-scale));
+}
+
+.guitar-fretboard--ukulele .guitar-strings-layer > .guitar-string-row:nth-child(3) .guitar-string {
+  height: calc(2.5px * var(--vg-string-scale));
+}
+
+/* 4th string (G4 re-entrant) — same thin gauge as 1st, not the thickest */
+.guitar-fretboard--ukulele .guitar-strings-layer > .guitar-string-row:nth-child(4) .guitar-string {
+  height: calc(2px * var(--vg-string-scale));
+}
+
+/* Smaller inlay dots to match narrower neck */
+.guitar-fretboard--ukulele .guitar-fret-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+/* Note label colour warmer on uke headstock */
+.guitar-fretboard--ukulele .guitar-nut-note {
+  color: #3d2b10;
+}
+
+/* ── Bass fretboard overrides (plan A: thicker strings, clustered spacing, wider nut) ── */
+.guitar-fretboard--bass {
+  --nut-width: 7.75rem;
+  --fretboard-bg: #383838;
+  --fret-color: #7a7a7a;
+  --fret-shadow: #3a3a3a;
+  --vg-string-scale: 1;
+}
+
+@media (min-width: 768px) {
+  .guitar-fretboard--bass {
+    --nut-width: 8.5rem;
+    --vg-string-scale: 1.1;
+  }
+}
+
 .guitar-fretboard--bass .guitar-nut-texture {
   background-color: #8f6340;
   background-image: url("/bass/nut-texture.webp");
@@ -7,6 +125,62 @@
 
 .guitar-fretboard--bass .guitar-headstock {
   box-shadow: inset -10px 0 30px rgba(40, 28, 12, 0.35);
+}
+
+/* Hide guitar-style tuning peg caps */
+.guitar-fretboard--bass .guitar-headstock::before,
+.guitar-fretboard--bass .guitar-headstock::after {
+  display: none;
+}
+
+/* Bass fretboard texture */
+.guitar-fretboard--bass .guitar-fretboard-surface {
+  background-color: var(--fretboard-bg);
+  background-image:
+    url("/bass/fretboard-texture.webp"),
+    linear-gradient(
+      180deg,
+      #444 0%,
+      var(--fretboard-bg) 42%,
+      #2e2e2e 100%
+    );
+  background-size: cover;
+  background-position: center;
+}
+
+/* 4 strings clustered in the centre with wider gaps */
+.guitar-fretboard--bass .guitar-strings-layer {
+  justify-content: center;
+  gap: 1.1rem;
+}
+
+@media (min-width: 768px) {
+  .guitar-fretboard--bass .guitar-strings-layer {
+    gap: 1.35rem;
+  }
+}
+
+.guitar-fretboard--bass .guitar-string-row {
+  flex: 0 0 auto;
+  min-height: 1.5rem;
+}
+
+/* Bass string gauge — all thicker than guitar, low string heaviest */
+.guitar-fretboard--bass .guitar-string {
+  height: calc(5px * var(--vg-string-scale));
+  border-radius: 2px;
+}
+
+.guitar-fretboard--bass .guitar-strings-layer > .guitar-string-row:nth-child(2) .guitar-string {
+  height: calc(5.75px * var(--vg-string-scale));
+}
+
+.guitar-fretboard--bass .guitar-strings-layer > .guitar-string-row:nth-child(3) .guitar-string {
+  height: calc(6.75px * var(--vg-string-scale));
+}
+
+.guitar-fretboard--bass .guitar-strings-layer > .guitar-string-row:nth-child(4) .guitar-string {
+  height: calc(8px * var(--vg-string-scale));
 }
 
 .guitar-fretboard {

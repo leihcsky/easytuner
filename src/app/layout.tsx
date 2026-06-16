@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Free online instrument tuners for guitar, bass, ukulele, and violin. Tune instantly using your microphone.",
+    "Free online instrument tuners for guitar, bass, and ukulele. Tune instantly using your microphone.",
   openGraph: {
     type: "website",
     locale: "en_US",

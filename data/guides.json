@@ -2,8 +2,16 @@
   {
     "slug": "how-to-tune-a-guitar",
     "title": "How to Tune a Guitar",
-    "description": "Learn how to tune your guitar step by step using an online tuner, tuning fork, or reference pitch.",
-    "keywords": ["how to tune a guitar", "guitar tuning guide", "tune guitar for beginners"]
+    "absolute": "How to Tune a Guitar - Step-by-Step Online Tuner Guide",
+    "description": "Step-by-step guide to tuning a guitar with EasyTuner: EADGBE reference tones, microphone strobe dial, cents readout, auto-advance, and tips for beginners.",
+    "keywords": [
+      "how to tune a guitar",
+      "tune guitar online",
+      "guitar tuning for beginners",
+      "online guitar tuner guide",
+      "EADGBE tuning steps",
+      "tune guitar with microphone"
+    ]
   },
   {
     "slug": "guitar-string-frequencies",

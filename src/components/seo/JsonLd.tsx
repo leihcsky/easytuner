@@ -26,6 +26,38 @@ export function buildFaqSchema(faq: { question: string; answer: string }[]) {
   };
 }
 
+export function buildArticleSchema(
+  title: string,
+  description: string,
+  url: string,
+  datePublished = "2025-06-01",
+  dateModified = "2025-06-11"
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: title,
+    description,
+    url,
+    datePublished,
+    dateModified,
+    author: {
+      "@type": "Organization",
+      name: "EasyTuner",
+      url: "https://easytuner.org",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "EasyTuner",
+      url: "https://easytuner.org",
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": url,
+    },
+  };
+}
+
 export function buildWebAppSchema(name: string, description: string, url: string) {
   return {
     "@context": "https://schema.org",
