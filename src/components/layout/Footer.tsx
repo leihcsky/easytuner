@@ -72,7 +72,24 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-gray-200 text-center text-sm text-gray-500">
+        <nav
+          className="mt-8 pt-8 border-t border-gray-200 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm"
+          aria-label="Legal"
+        >
+          <Link href="/about" className="text-gray-600 hover:text-brand-600">
+            About
+          </Link>
+          <Link href="/contact" className="text-gray-600 hover:text-brand-600">
+            Contact
+          </Link>
+          <Link href="/privacy" className="text-gray-600 hover:text-brand-600">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="text-gray-600 hover:text-brand-600">
+            Terms of Service
+          </Link>
+        </nav>
+        <div className="mt-6 text-center text-sm text-gray-500">
           © {new Date().getFullYear()} EasyTuner. All rights reserved.
         </div>
       </div>

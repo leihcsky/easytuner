@@ -33,5 +33,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...tuningPages, ...guidePages];
+  const legalPages: MetadataRoute.Sitemap = [
+    "/about",
+    "/contact",
+    "/privacy",
+    "/terms",
+  ].map((path) => ({
+    url: `${SITE_URL}${path}`,
+    lastModified: now,
+    changeFrequency: "yearly" as const,
+    priority: 0.3,
+  }));
+
+  return [...staticPages, ...tuningPages, ...guidePages, ...legalPages];
 }
