@@ -24,16 +24,15 @@ import { getReferenceAudioUrl } from "@/lib/reference-audio";
 import { GuitarHeadstock } from "@/components/tuner/GuitarHeadstock";
 import { GuitarFretboard } from "@/components/tuner/GuitarFretboard";
 import { TuningProgressBar } from "@/components/tuner/TuningProgressBar";
-import { SignalStrength } from "@/components/tuner/SignalStrength";
 import { useStableTunerDisplay } from "@/hooks/useStableTunerDisplay";
 import { StrobeTuner } from "@/components/tuner/StrobeTuner";
 import { TuneDirectionHint } from "@/components/tuner/TuneDirectionHint";
 import { AutoAdvanceToggle } from "@/components/tuner/AutoAdvanceToggle";
-import { ReferenceLoopToggle } from "@/components/tuner/ReferenceLoopToggle";
+import { TunerLoopHintRow } from "@/components/tuner/TunerLoopHintRow";
+import { TunerMicControlBar } from "@/components/tuner/TunerMicControlBar";
 import { TunerSidebar } from "@/components/tuner/TunerSidebar";
 import { TunerOnboarding } from "@/components/tuner/TunerOnboarding";
 import { TuningComplete } from "@/components/tuner/TuningComplete";
-import { TuningSessionTimer } from "@/components/tuner/TuningSessionTimer";
 import type { StringTuneState, TuningStatus } from "@/types/tuning";
 
 const CLOSE_THRESHOLD = 15;
@@ -602,14 +601,11 @@ export function TunerTool({
                 onPlayReference={handlePlayReference}
               />
 
-              <div className="relative flex items-center mt-1.5 min-h-5">
-                <ReferenceLoopToggle enabled={referenceLoop} onChange={setReferenceLoop} />
-                {isListening && (
-                  <p className="absolute left-1/2 -translate-x-1/2 text-[10px] text-gray-400 whitespace-nowrap pointer-events-none">
-                    Pluck the open string
-                  </p>
-                )}
-              </div>
+              <TunerLoopHintRow
+                referenceLoop={referenceLoop}
+                onReferenceLoopChange={setReferenceLoop}
+                isListening={isListening}
+              />
 
               <div className="mt-1.5 min-h-[11.5rem] flex flex-col items-center justify-center">
                 {meterPanel}
@@ -633,52 +629,18 @@ export function TunerTool({
                 </div>
               )}
 
-              <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100 min-h-[2.75rem]">
-                <div className="flex-1 min-w-0">
-                  <SignalStrength
-                    bars={display.bars}
-                    label={display.label}
-                    isListening={isListening}
-                  />
-                </div>
-
-                <div className="shrink-0 px-1">
-                  {!isListening ? (
-                    <button
-                      type="button"
-                      onClick={() => startListeningRef.current()}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-md shadow-brand-600/30 hover:bg-brand-700 active:scale-[0.98] transition-all"
-                    >
-                      <MicIcon />
-                      Tap to tune
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={stopListening}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all"
-                    >
-                      Stop mic
-                    </button>
-                  )}
-                </div>
-
-                <div className="flex-1 min-w-0 flex items-center justify-end gap-2">
-                  <TuningSessionTimer
-                    elapsedMs={isComplete ? finalElapsedMs : elapsedMs}
-                    isListening={isListening && !isComplete}
-                  />
-                  {tunedCount > 0 && (
-                    <button
-                      type="button"
-                      onClick={resetProgress}
-                      className="text-xs text-gray-500 hover:text-gray-800 underline shrink-0"
-                    >
-                      Reset
-                    </button>
-                  )}
-                </div>
-              </div>
+              <TunerMicControlBar
+                isListening={isListening}
+                bars={display.bars}
+                signalLabel={display.label}
+                isComplete={isComplete}
+                elapsedMs={elapsedMs}
+                finalElapsedMs={finalElapsedMs}
+                tunedCount={tunedCount}
+                onStart={() => startListeningRef.current()}
+                onStop={stopListening}
+                onReset={resetProgress}
+              />
 
               {error && <p className="mt-2 text-xs text-red-500 text-center">{error}</p>}
             </div>
@@ -738,7 +700,7 @@ export function TunerTool({
           />
           <div className="flex flex-col items-center gap-3">
             {isListening ? (
-              <p className="text-[10px] text-gray-400 text-center -mb-1">
+              <p className="text-[10px] text-gray-400 text-right w-full sm:text-center -mb-1">
                 Pluck the open string
               </p>
             ) : null}
@@ -761,60 +723,27 @@ export function TunerTool({
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 px-1">
-          <SignalStrength
-            bars={display.bars}
-            label={display.label}
-            isListening={isListening}
-          />
-          <div className="flex flex-col sm:items-end gap-1">
-            <p className="text-sm text-gray-500">
-              Tuning:{" "}
-              <span className="font-semibold text-gray-800">{targetLabel}</span>
-            </p>
-            <TuningSessionTimer
-              elapsedMs={isComplete ? finalElapsedMs : elapsedMs}
-              isListening={isListening && !isComplete}
-            />
-          </div>
-        </div>
+        <p className="mb-4 hidden sm:block text-sm text-gray-600">
+          Tuning: <span className="font-semibold text-gray-800">{targetLabel}</span>
+        </p>
 
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          {!isListening ? (
-            <button
-              onClick={startListening}
-              className="px-8 py-3 rounded-full bg-brand-600 text-white font-semibold hover:bg-brand-700 transition-colors shadow-lg shadow-brand-600/25"
-            >
-              Enable Microphone (optional)
-            </button>
-          ) : (
-            <button
-              onClick={stopListening}
-              className="px-8 py-3 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition-colors"
-            >
-              Stop
-            </button>
-          )}
-          {tunedCount > 0 && (
-            <button
-              onClick={resetProgress}
-              className="px-5 py-3 rounded-full border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors"
-            >
-              Reset Progress
-            </button>
-          )}
-        </div>
+        <TunerMicControlBar
+          isListening={isListening}
+          bars={display.bars}
+          signalLabel={display.label}
+          isComplete={isComplete}
+          elapsedMs={elapsedMs}
+          finalElapsedMs={finalElapsedMs}
+          tunedCount={tunedCount}
+          onStart={startListening}
+          onStop={stopListening}
+          onReset={resetProgress}
+          startLabel="Enable Microphone (optional)"
+          stopLabel="Stop"
+        />
 
         {error && <p className="mt-4 text-sm text-red-500 text-center">{error}</p>}
       </div>
     </section>
-  );
-}
-
-function MicIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z" />
-    </svg>
   );
 }
