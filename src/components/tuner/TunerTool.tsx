@@ -15,6 +15,7 @@ import {
 } from "@/lib/notes";
 import {
   computeRms,
+  getAnalyserFftSize,
   isPitchCandidateValid,
   PitchGate,
 } from "@/lib/pitch-gate";
@@ -172,7 +173,7 @@ export function TunerTool({
     (stringIndex: number, rawPitch: number, noteList: string[]) => {
       if (stringStatesRef.current[stringIndex] === "in-tune") return;
       const target = noteList[stringIndex];
-      if (!pitchLocksTargetNote(rawPitch, target)) return;
+      if (!pitchLocksTargetNote(rawPitch, target, noteList)) return;
 
       setStringStates((prev) => {
         if (prev[stringIndex] === "in-tune") return prev;
@@ -216,7 +217,7 @@ export function TunerTool({
       const activeIdx = activeStringRef.current;
       const closest = findClosestStringIndex(rawPitch, currentNotes);
       const closestTarget = currentNotes[closest];
-      const closestCents = getStringCentsDeviation(rawPitch, closestTarget);
+      const closestCents = getStringCentsDeviation(rawPitch, closestTarget, currentNotes);
 
       // Coach mode: stay on the guided target. Free mode: only jump after current string is ✓.
       let stringIdx = activeIdx;
@@ -237,7 +238,7 @@ export function TunerTool({
       }
 
       const target = currentNotes[stringIdx];
-      const resolved = resolvePitchForString(rawPitch, target);
+      const resolved = resolvePitchForString(rawPitch, target, currentNotes);
       const targetCents = resolved.cents;
       const inTuneThreshold = getInTuneThresholdForNote(target);
       const tuningStatus = getTuningStatus(targetCents, inTuneThreshold);
@@ -250,7 +251,7 @@ export function TunerTool({
 
       let lockTargetIdx: number | null = null;
 
-      if (pitchLocksTargetNote(rawPitch, target)) {
+      if (pitchLocksTargetNote(rawPitch, target, currentNotes)) {
         lockTargetIdx = stringIdx;
       }
 
@@ -326,7 +327,7 @@ export function TunerTool({
 
       const source = ctx.createMediaStreamSource(stream);
       const analyser = ctx.createAnalyser();
-      analyser.fftSize = 8192;
+      analyser.fftSize = getAnalyserFftSize(instrument);
       source.connect(analyser);
       analyserRef.current = analyser;
 
@@ -344,7 +345,7 @@ export function TunerTool({
     } catch {
       setError("Microphone access denied. Please allow microphone access to use the tuner.");
     }
-  }, [stringStates, detectPitch]);
+  }, [stringStates, detectPitch, instrument]);
 
   startListeningRef.current = startListening;
 
@@ -463,7 +464,9 @@ export function TunerTool({
     setFinalElapsedMs(0);
     prevStringStatesRef.current = fresh;
     prevForAdvanceRef.current = fresh;
-  }, [notes]);
+    pitchGateRef.current.reset();
+    resetLockTracking();
+  }, [notes, resetLockTracking]);
 
   useEffect(() => {
     if (!referenceLoop) {
@@ -512,7 +515,7 @@ export function TunerTool({
       const note = notes[index];
       const audioUrl =
         instrument && tuningSlug
-          ? getReferenceAudioUrl(instrument, tuningSlug, index, note)
+          ? getReferenceAudioUrl(instrument, tuningSlug, index, note, notes.length)
           : undefined;
 
       const clearPlaying = () => {

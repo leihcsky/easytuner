@@ -70,23 +70,23 @@
   min-height: 1.25rem;
 }
 
-/* Nylon strings — thinner than guitar, similar gauge (re-entrant: 4th string not heaviest) */
+/* Nylon strings — outer 1st (A) & 4th (G) thin; middle 2nd (E) & 3rd (C) thicker (C wound is heaviest) */
 .guitar-fretboard--ukulele .guitar-string {
-  height: calc(2px * var(--vg-string-scale));
+  height: calc(1.75px * var(--vg-string-scale));
   border-radius: 1px;
 }
 
+.guitar-fretboard--ukulele .guitar-strings-layer > .guitar-string-row:nth-child(1) .guitar-string,
+.guitar-fretboard--ukulele .guitar-strings-layer > .guitar-string-row:nth-child(4) .guitar-string {
+  height: calc(1.75px * var(--vg-string-scale));
+}
+
 .guitar-fretboard--ukulele .guitar-strings-layer > .guitar-string-row:nth-child(2) .guitar-string {
-  height: calc(2.5px * var(--vg-string-scale));
+  height: calc(3px * var(--vg-string-scale));
 }
 
 .guitar-fretboard--ukulele .guitar-strings-layer > .guitar-string-row:nth-child(3) .guitar-string {
-  height: calc(2.5px * var(--vg-string-scale));
-}
-
-/* 4th string (G4 re-entrant) — same thin gauge as 1st, not the thickest */
-.guitar-fretboard--ukulele .guitar-strings-layer > .guitar-string-row:nth-child(4) .guitar-string {
-  height: calc(2px * var(--vg-string-scale));
+  height: calc(3.75px * var(--vg-string-scale));
 }
 
 /* Smaller inlay dots to match narrower neck */
@@ -98,6 +98,16 @@
 /* Note label colour warmer on uke headstock */
 .guitar-fretboard--ukulele .guitar-nut-note {
   color: #3d2b10;
+}
+
+.guitar-fretboard--ukulele .guitar-nut-note--active {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.85);
+}
+
+.guitar-fretboard--ukulele .guitar-nut-note--playing {
+  color: #15803d;
+  text-shadow: none;
 }
 
 /* ── Bass fretboard overrides (plan A: thicker strings, clustered spacing, wider nut) ── */

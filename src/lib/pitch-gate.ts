@@ -1,4 +1,9 @@
-import { noteToFrequency, refineDetectedPitch } from "./notes";
+import {
+  noteToFrequency,
+  refineDetectedPitch,
+  isBassTuningNotes,
+  isUkuleleTuningNotes,
+} from "./notes";
 
 /** Default pitchy clarity — high strings. Low strings use a lower floor (see clarityMinForPitch). */
 export const PITCH_CLARITY_MIN = 0.93;
@@ -31,24 +36,42 @@ export function getInstrumentFreqRange(notes: string[]): { minHz: number; maxHz:
   };
 }
 
-/** Pitchy clarity is lower on bass strings — scale threshold down below ~120 Hz. */
+/** Pitchy clarity — lower for bass fundamentals and soft nylon ukulele plucks. */
 export function clarityMinForPitch(pitch: number, notes: string[]): number {
   if (pitch <= 0) return PITCH_CLARITY_MIN;
+  const bass = isBassTuningNotes(notes);
+  const ukulele = isUkuleleTuningNotes(notes);
   const { minHz } = getInstrumentFreqRange(notes);
-  if (pitch < minHz * 1.1) return 0.78;
-  if (pitch < 120) return 0.85;
-  if (pitch < 200) return 0.88;
+  if (bass && pitch < 55) return 0.72;
+  if (pitch < minHz * 1.1) return bass ? 0.75 : 0.78;
+  if (ukulele && pitch < 450) return 0.88;
+  if (pitch < 120) return bass ? 0.82 : 0.85;
+  if (pitch < 200) return bass ? 0.86 : 0.88;
   return PITCH_CLARITY_MIN;
 }
 
-/** Bass plucks often have lower RMS in the analyser buffer. */
+/** Bass and ukulele plucks often have lower RMS in the analyser buffer. */
 export function rmsMinForPitch(pitch: number, notes: string[]): number {
   if (pitch <= 0) return PITCH_RMS_MIN;
+  const bass = isBassTuningNotes(notes);
+  const ukulele = isUkuleleTuningNotes(notes);
   const { minHz } = getInstrumentFreqRange(notes);
-  if (pitch < minHz * 1.15) return 0.005;
-  if (pitch < 120) return 0.007;
-  if (pitch < 200) return 0.008;
+  if (bass && pitch < 55) return 0.004;
+  if (pitch < minHz * 1.15) return bass ? 0.0045 : 0.005;
+  if (ukulele && pitch < 450) return 0.009;
+  if (pitch < 120) return bass ? 0.006 : 0.007;
+  if (pitch < 200) return bass ? 0.0075 : 0.008;
   return PITCH_RMS_MIN;
+}
+
+function pitchInInstrumentRange(p: number, minHz: number, maxHz: number): boolean {
+  if (p >= minHz && p <= maxHz) return true;
+  const partials = [0.5, 2, 3];
+  for (const multiple of partials) {
+    const fundamental = multiple < 1 ? p * 2 : p / multiple;
+    if (fundamental >= minHz && fundamental <= maxHz) return true;
+  }
+  return false;
 }
 
 export type PitchCandidate = {
@@ -72,11 +95,15 @@ export function isPitchCandidateValid(
     if (clarity < clarityMin || rms < rmsMin) continue;
 
     const { minHz, maxHz } = getInstrumentFreqRange(notes);
-    const inRange =
-      (p >= minHz && p <= maxHz) || (p * 0.5 >= minHz && p * 0.5 <= maxHz);
+    const inRange = pitchInInstrumentRange(p, minHz, maxHz);
     if (inRange) return true;
   }
   return false;
+}
+
+/** Larger FFT improves low-E (E1) fundamental detection for bass. */
+export function getAnalyserFftSize(instrument?: string): number {
+  return instrument === "bass" ? 16384 : 8192;
 }
 
 export class PitchGate {

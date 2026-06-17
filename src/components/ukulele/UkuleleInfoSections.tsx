@@ -8,8 +8,8 @@ export function WhatIsStandardUkuleleTuningSection() {
         <p>
           Standard ukulele tuning is <strong className="font-medium text-gray-800">G-C-E-A</strong>{" "}
           from the 4th string to the 1st. On soprano, concert, and tenor ukuleles
-          the open pitches are typically G4 (~392 Hz), C4 (~262 Hz), E4 (~330 Hz),
-          and A4 (~440 Hz).
+          the open pitches are G4 (392.0 Hz), C4 (261.6 Hz), E4 (329.6 Hz),
+          and A4 (440.0 Hz) at concert pitch (A4 = 440 Hz).
         </p>
         <p>
           The unusual part is <strong className="font-medium text-gray-800">re-entrant tuning</strong>:

@@ -10,8 +10,8 @@ export function WhatIsStandardBassTuningSection() {
           from the lowest (4th) string to the highest (1st) — the same note names as
           the bottom four strings on a guitar, but each pitched{" "}
           <strong className="font-medium text-gray-800">one octave lower</strong>.
-          The open strings are E1 (~41.2 Hz), A1 (~55.0 Hz), D2 (~73.4 Hz), and
-          G2 (~98.0 Hz).
+          The open strings are E1 (41.2 Hz), A1 (55.0 Hz), D2 (73.4 Hz), and
+          G2 (98.0 Hz) at concert pitch (A4 = 440 Hz).
         </p>
         <p>
           That low fundamental on the E string is what gives the bass its weight in a

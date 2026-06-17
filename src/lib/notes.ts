@@ -15,11 +15,81 @@ export const STRING_MATCH_WINDOW_CENTS = 50;
 const HARMONIC_RATIO_MIN = 1.75;
 const HARMONIC_RATIO_MAX = 2.25;
 
+/** Bass fundamentals (E1–G2) — mic often reports 2×/3× partials or weak subharmonics. */
+const BASS_FUNDAMENTAL_MAX_HZ = 130;
+const HARMONIC_MULTIPLE_TOLERANCE = 0.14;
+
 /**
  * Wound bass strings: the 2nd partial is typically ~8–12¢ sharp of a perfect octave.
  * When pitchy locks onto that partial, f0 = pitch/2 reads sharp by about this amount.
  */
 const BASS_HARMONIC_SHARP_CENTS = 10;
+
+export function isLowBassFundamental(targetNote: string): boolean {
+  return noteToFrequency(targetNote) < BASS_FUNDAMENTAL_MAX_HZ;
+}
+
+export function isBassTuningNotes(notes: string[]): boolean {
+  if (notes.length === 0) return false;
+  return Math.min(...notes.map(noteToFrequency)) < 50;
+}
+
+/** Standard re-entrant G4-C4-E4-A4: 4th-string G sounds above 3rd-string C. */
+export function isReentrantUkuleleTuning(notes: string[]): boolean {
+  if (notes.length !== 4) return false;
+  const freqs = notes.map(noteToFrequency);
+  return notes[0]?.startsWith("G") && freqs[0] > freqs[1];
+}
+
+export function isUkuleleTuningNotes(notes: string[]): boolean {
+  return isReentrantUkuleleTuning(notes);
+}
+
+function isHarmonicMultiple(
+  pitch: number,
+  targetFreq: number,
+  multiple: number
+): boolean {
+  if (pitch <= 0 || targetFreq <= 0 || multiple <= 0) return false;
+  const ratio = pitch / targetFreq;
+  return Math.abs(ratio - multiple) / multiple <= HARMONIC_MULTIPLE_TOLERANCE;
+}
+
+/** Fold 2×/3× harmonics or 0.5× subharmonics down to the bass fundamental. */
+function foldBassPartialToFundamental(
+  pitch: number,
+  targetNote: string
+): { fundamental: number; partial: 2 | 3 | 0.5 } | null {
+  const targetFreq = noteToFrequency(targetNote);
+  if (targetFreq >= BASS_FUNDAMENTAL_MAX_HZ) return null;
+
+  if (isHarmonicMultiple(pitch, targetFreq, 2)) {
+    return { fundamental: foldToTargetNote(pitch, targetNote), partial: 2 };
+  }
+  if (isHarmonicMultiple(pitch, targetFreq, 3)) {
+    return { fundamental: pitch / 3, partial: 3 };
+  }
+  if (isHarmonicMultiple(pitch, targetFreq, 0.5)) {
+    return { fundamental: pitch * 2, partial: 0.5 };
+  }
+  return null;
+}
+
+/** Fold a detected 2nd harmonic above the target down to the open-string fundamental. */
+function foldSecondHarmonicDown(pitch: number, targetNote: string): number | null {
+  const targetFreq = noteToFrequency(targetNote);
+  if (pitch <= targetFreq) return null;
+  if (!isLikelySecondHarmonic(pitch, targetNote)) return null;
+  return foldToTargetNote(pitch, targetNote);
+}
+
+/** Fold a detected subharmonic (~0.5×) up to the open-string fundamental (uke G3→G4, etc.). */
+function foldSubharmonicUp(pitch: number, targetNote: string): number | null {
+  const targetFreq = noteToFrequency(targetNote);
+  if (pitch >= targetFreq) return null;
+  if (!isHarmonicMultiple(pitch, targetFreq, 0.5)) return null;
+  return pitch * 2;
+}
 
 export function parseNote(note: string): { name: string; octave: number } {
   const match = note.match(/^([A-G][#b]?)(\d+)$/);
@@ -112,10 +182,11 @@ export function isLikelySecondHarmonic(pitch: number, targetNote: string): boole
   return ratio >= HARMONIC_RATIO_MIN && ratio <= HARMONIC_RATIO_MAX;
 }
 
-/** Map detected pitch to a string target (raw first; 2× harmonic fold for bass only). */
+/** Map detected pitch to a string target (raw first; bass harmonic fold when needed). */
 export function resolvePitchForString(
   pitch: number,
-  targetNote: string
+  targetNote: string,
+  notes?: string[]
 ): { normalizedPitch: number; cents: number; fromHarmonic: boolean } {
   const targetFreq = noteToFrequency(targetNote);
   const detected = frequencyToNote(pitch);
@@ -133,20 +204,71 @@ export function resolvePitchForString(
     return { normalizedPitch: pitch, cents: rawCents, fromHarmonic: false };
   }
 
-  if (targetFreq < 130 && isLikelySecondHarmonic(pitch, targetNote)) {
-    const normalizedPitch = foldToTargetNote(pitch, targetNote);
-    const cents = Math.round(
-      getCentsFromTarget(normalizedPitch, targetNote) - BASS_HARMONIC_SHARP_CENTS
-    );
+  const bassFold = foldBassPartialToFundamental(pitch, targetNote);
+  if (bassFold) {
+    let cents = getCentsFromTarget(bassFold.fundamental, targetNote);
+    if (bassFold.partial === 2) {
+      cents = Math.round(cents - BASS_HARMONIC_SHARP_CENTS);
+    }
     const correctedHz = targetFreq * Math.pow(2, cents / 1200);
     return { normalizedPitch: correctedHz, cents, fromHarmonic: true };
   }
+
+  const folded2x = foldSecondHarmonicDown(pitch, targetNote);
+  if (folded2x !== null) {
+    const cents = getCentsFromTarget(folded2x, targetNote);
+    const sharpCorr = isLowBassFundamental(targetNote) ? BASS_HARMONIC_SHARP_CENTS : 0;
+    const adjustedCents = Math.round(cents - sharpCorr);
+    const correctedHz = targetFreq * Math.pow(2, adjustedCents / 1200);
+    return { normalizedPitch: correctedHz, cents: adjustedCents, fromHarmonic: true };
+  }
+
+  const foldedHalf =
+    notes && isReentrantUkuleleTuning(notes)
+      ? foldSubharmonicUp(pitch, targetNote)
+      : null;
+  if (foldedHalf !== null) {
+    const cents = getCentsFromTarget(foldedHalf, targetNote);
+    const correctedHz = targetFreq * Math.pow(2, cents / 1200);
+    return { normalizedPitch: correctedHz, cents, fromHarmonic: true };
+  }
+
   return { normalizedPitch: pitch, cents: rawCents, fromHarmonic: false };
 }
 
 /** Cents deviation for string matching. */
-export function getStringCentsDeviation(frequency: number, targetNote: string): number {
-  return Math.abs(resolvePitchForString(frequency, targetNote).cents);
+export function getStringCentsDeviation(
+  frequency: number,
+  targetNote: string,
+  notes?: string[]
+): number {
+  return Math.abs(resolvePitchForString(frequency, targetNote, notes).cents);
+}
+
+/** Open strings share a pitch-class letter (DADGAD D×3/A×2, standard E×2, etc.). */
+export function hasDuplicatePitchClassOpenStrings(notes: string[]): boolean {
+  const names = notes.map((n) => parseNote(n).name);
+  return new Set(names).size < names.length;
+}
+
+/** Score strings by resolved cents, then Hz distance, preferring direct over harmonic matches. */
+function pickClosestStringByResolvedPitch(frequency: number, notes: string[]): number {
+  let bestIdx = 0;
+  let bestScore = Infinity;
+
+  for (let i = 0; i < notes.length; i++) {
+    const resolved = resolvePitchForString(frequency, notes[i], notes);
+    const centsDev = Math.abs(resolved.cents);
+    const freqDiff = Math.abs(frequency - noteToFrequency(notes[i]));
+    const harmonicPenalty = resolved.fromHarmonic ? 0.5 : 0;
+    const score = centsDev * 1000 + freqDiff + harmonicPenalty;
+
+    if (score < bestScore) {
+      bestScore = score;
+      bestIdx = i;
+    }
+  }
+  return bestIdx;
 }
 
 /** When several strings match within the window (e.g. E2/E4), pick nearest Hz. */
@@ -173,31 +295,27 @@ function breakPitchClassTie(frequency: number, notes: string[], windowCents: num
 
 /** Pick the target string whose note is closest to the detected frequency. */
 export function findClosestStringIndex(frequency: number, notes: string[]): number {
-  let bestRawIdx = 0;
-  let bestRawDev = Infinity;
+  const reentrantUke = isReentrantUkuleleTuning(notes);
+  const duplicatePitch = hasDuplicatePitchClassOpenStrings(notes);
 
-  for (let i = 0; i < notes.length; i++) {
-    const rawDev = Math.abs(getCentsFromTarget(frequency, notes[i]));
-    if (rawDev < bestRawDev) {
-      bestRawDev = rawDev;
-      bestRawIdx = i;
+  if (!reentrantUke && !duplicatePitch) {
+    let bestRawIdx = 0;
+    let bestRawDev = Infinity;
+
+    for (let i = 0; i < notes.length; i++) {
+      const rawDev = Math.abs(getCentsFromTarget(frequency, notes[i]));
+      if (rawDev < bestRawDev) {
+        bestRawDev = rawDev;
+        bestRawIdx = i;
+      }
+    }
+
+    if (bestRawDev <= STRING_MATCH_WINDOW_CENTS) {
+      return breakPitchClassTie(frequency, notes, STRING_MATCH_WINDOW_CENTS);
     }
   }
 
-  if (bestRawDev <= STRING_MATCH_WINDOW_CENTS) {
-    return breakPitchClassTie(frequency, notes, STRING_MATCH_WINDOW_CENTS);
-  }
-
-  let bestIdx = 0;
-  let bestDev = Infinity;
-  for (let i = 0; i < notes.length; i++) {
-    const dev = getStringCentsDeviation(frequency, notes[i]);
-    if (dev < bestDev) {
-      bestDev = dev;
-      bestIdx = i;
-    }
-  }
-  return bestIdx;
+  return pickClosestStringByResolvedPitch(frequency, notes);
 }
 
 /**
@@ -206,9 +324,13 @@ export function findClosestStringIndex(frequency: number, notes: string[]): numb
 export function refineDetectedPitch(pitch: number, notes: string[]): number {
   if (pitch <= 0) return pitch;
 
+  const detected = frequencyToNote(pitch);
+  if (notes.includes(detected.note)) {
+    return pitch;
+  }
+
   const rawIdx = findClosestStringIndex(pitch, notes);
   const targetNote = notes[rawIdx];
-  const detected = frequencyToNote(pitch);
 
   if (detected.note === targetNote) {
     return pitch;
@@ -221,9 +343,15 @@ export function refineDetectedPitch(pitch: number, notes: string[]): number {
   }
 
   for (const note of notes) {
-    if (noteToFrequency(note) >= 130) continue;
-    if (isLikelySecondHarmonic(pitch, note)) {
-      return foldToTargetNote(pitch, note);
+    if (isLowBassFundamental(note)) {
+      const folded = foldBassPartialToFundamental(pitch, note);
+      if (folded) return folded.fundamental;
+    }
+    const folded2x = foldSecondHarmonicDown(pitch, note);
+    if (folded2x !== null) return folded2x;
+    if (isReentrantUkuleleTuning(notes)) {
+      const foldedHalf = foldSubharmonicUp(pitch, note);
+      if (foldedHalf !== null) return foldedHalf;
     }
   }
 
@@ -234,17 +362,14 @@ export function refineDetectedPitch(pitch: number, notes: string[]): number {
 export function pitchMatchesTargetNote(
   pitch: number,
   targetNote: string,
-  maxCents?: number
+  maxCents?: number,
+  notes?: string[]
 ): { matches: boolean; normalizedPitch: number; cents: number } {
   const threshold = maxCents ?? getInTuneThresholdForNote(targetNote);
-  const resolved = resolvePitchForString(pitch, targetNote);
+  const resolved = resolvePitchForString(pitch, targetNote, notes);
   const detected = frequencyToNote(resolved.normalizedPitch);
 
   if (detected.note !== targetNote) {
-    return { matches: false, normalizedPitch: pitch, cents: resolved.cents };
-  }
-
-  if (resolved.fromHarmonic && noteToFrequency(targetNote) >= 130) {
     return { matches: false, normalizedPitch: pitch, cents: resolved.cents };
   }
 
@@ -256,10 +381,14 @@ export function pitchMatchesTargetNote(
 }
 
 /** Lock when strict note match passes OR display would show in-tune for this target. */
-export function pitchLocksTargetNote(pitch: number, targetNote: string): boolean {
+export function pitchLocksTargetNote(
+  pitch: number,
+  targetNote: string,
+  notes?: string[]
+): boolean {
   const threshold = getInTuneThresholdForNote(targetNote);
-  if (pitchMatchesTargetNote(pitch, targetNote, threshold).matches) return true;
-  const resolved = resolvePitchForString(pitch, targetNote);
+  if (pitchMatchesTargetNote(pitch, targetNote, threshold, notes).matches) return true;
+  const resolved = resolvePitchForString(pitch, targetNote, notes);
   return getTuningStatus(resolved.cents, threshold) === "in-tune";
 }
 
