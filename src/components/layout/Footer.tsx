@@ -11,6 +11,18 @@ export function Footer() {
             <p className="text-sm text-gray-600">
               Free online instrument tuners. Tune your guitar, bass, and ukulele instantly.
             </p>
+            <a
+              href="https://toolfame.com/item/easytuner"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-block opacity-90 hover:opacity-100 transition-opacity"
+            >
+              <img
+                src="https://toolfame.com/badge-light.svg"
+                alt="Featured on toolfame.com"
+                className="h-8 w-auto"
+              />
+            </a>
           </div>
           <div>
             <p className="font-semibold text-gray-900 mb-3">Guitar Tunings</p>
