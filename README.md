@@ -2,6 +2,8 @@
 
 Free online instrument tuner platform. Tune your guitar, bass, ukulele, and violin instantly using your microphone.
 
+**Live site:** [https://easytuner.org/](https://easytuner.org/)
+
 ## Tech Stack
 
 - **Next.js 15** (App Router, SSG)
