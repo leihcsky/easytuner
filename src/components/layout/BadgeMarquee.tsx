@@ -15,6 +15,11 @@ const badges: Badge[] = [
     src: "https://appnetworker.com/assets/images/badge.png",
     alt: "App Networker",
   },
+  {
+    href: "https://starterbest.com",
+    src: "https://starterbest.com/badages-awards.svg",
+    alt: "Featured on Starter Best",
+  },
 ];
 
 export function BadgeMarquee() {
