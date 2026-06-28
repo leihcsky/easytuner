@@ -20,6 +20,16 @@ const badges: Badge[] = [
     src: "https://starterbest.com/badages-awards.svg",
     alt: "Featured on Starter Best",
   },
+  {
+    href: "https://tooldisk.com",
+    src: "https://tooldisk.com/badge/badge_light.svg",
+    alt: "Featured on ToolDisk.com",
+  },
+  {
+    href: "https://huntfortools.com/tool/easytuner",
+    src: "https://huntfortools.com/assets/images/badge.png",
+    alt: "Hunt for Tools",
+  },
 ];
 
 export function BadgeMarquee() {
